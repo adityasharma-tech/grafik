@@ -1,7 +1,6 @@
 import { cn } from "../lib/utils";
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   PolarGrid,
