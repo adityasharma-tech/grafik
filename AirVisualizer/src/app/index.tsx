@@ -1,4 +1,4 @@
-import React from "react";
+
 import Header from "../components/header";
 import GraphCard from "../components/graph-card";
 import Message from "../components/message";
