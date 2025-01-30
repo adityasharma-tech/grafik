@@ -19,7 +19,8 @@ export default function GraphCard({
     width: 500,
     height: 300,
   });
-  const [setDemoData] = useState(demoGraphData)
+  const [demoData, setDemoData] = useState(demoGraphData)
+  console.log(demoData)
   useEffect(() => {
     if (graphContainerRef.current)
       setGraphWidHei({
