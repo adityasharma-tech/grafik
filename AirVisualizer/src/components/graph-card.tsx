@@ -3,8 +3,6 @@ import {
   CartesianGrid,
   Line,
   LineChart,
-  PolarGrid,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -21,7 +19,7 @@ export default function GraphCard({
     width: 500,
     height: 300,
   });
-  const [demoData, setDemoData] = useState(demoGraphData)
+  const [setDemoData] = useState(demoGraphData)
   useEffect(() => {
     if (graphContainerRef.current)
       setGraphWidHei({
