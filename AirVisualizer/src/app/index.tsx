@@ -1,17 +1,30 @@
-import React from "react";
+import { useEffect } from "react";
 import Header from "../components/header";
 import GraphCard from "../components/graph-card";
 import Message from "../components/message";
 
 export default function Home() {
+
+  useEffect(()=>{
+    if(window.navigator && ("serial" in navigator)){
+      try {
+        (async ()=>{
+          
+        })()
+      } catch (error: any) {
+        
+      }
+    }
+  }, [])
+
   return (
     <div className="p-1 flex flex-col gap-1 h-screen w-screen overflow-x-hidden overflow-y-auto">
       <Header />
       <main className="flex md:flex-row flex-col gap-2 h-full">
         <section className="h-full w-full overflow-y-auto px-1">
           <GraphCard disabled={false} title="ADXL3xx accelerometer" primaryColor="#c70036" />
-          <GraphCard title="PIR sensor" primaryColor="#a65f00" />
-          <GraphCard title="HC-SR04 ultrasonic sensor" primaryColor="#104e64" />
+          <GraphCard disabled={true} title="PIR sensor" primaryColor="#a65f00" />
+          <GraphCard disabled={false} title="HC-SR04 ultrasonic sensor" primaryColor="#104e64" />
           <div>
             <button className="text-center w-full bg-neutral-200 hover:bg-neutral-300 transition-colors text-sm py-2 disabled:opacity-40 rounded-lg">
               Add custom graph

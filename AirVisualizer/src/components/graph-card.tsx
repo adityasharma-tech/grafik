@@ -87,7 +87,7 @@ export default function GraphCard({
             width={graphWidHei.width}
             height={graphWidHei.height}
           >
-            <Line isAnimationActive type="monotone" dataKey="pv" stroke={primaryColor} />
+            <Line data={demoData} dot={false} activeDot connectNulls isAnimationActive={false} type="monotone" dataKey="pv" stroke={primaryColor} />
             <CartesianGrid strokeOpacity={0.5} className="stroke-neutral-300" strokeWidth={0.5}/>
             <XAxis fontSize={12} strokeWidth={0.5} />
             <YAxis fontSize={12} strokeWidth={0.5} />
