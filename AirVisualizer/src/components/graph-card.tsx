@@ -1,11 +1,5 @@
 import { cn } from "../lib/utils";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { demoGraphData } from "../lib/constants";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -13,14 +7,20 @@ export default function GraphCard({
   title = "Graph1",
   primaryColor = "#262626",
   disabled = true,
+  port,
+}: {
+  port: any;
+  title: string;
+  primaryColor: string;
+  disabled: boolean;
 }) {
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const [graphWidHei, setGraphWidHei] = useState({
     width: 500,
     height: 300,
   });
-  const [demoData, setDemoData] = useState(demoGraphData)
-  
+  const [realData, setRealData] = useState<any[]>([]);
+
   useEffect(() => {
     if (graphContainerRef.current)
       setGraphWidHei({
@@ -29,24 +29,47 @@ export default function GraphCard({
       });
   }, [graphContainerRef]);
 
-  const demoDataAdder = useCallback(()=>{
-    setDemoData(demoData => {
-      const newData = [...demoData.slice(1), {
-      name: `Page ${demoData.length + 1}`,
-      uv: Math.floor(Math.random() * 4000),
-      pv: Math.floor(Math.random() * 4000),
-      amt: Math.floor(Math.random() * 4000),
+  const realDataAdder = useCallback((data: number)=>{
+    setRealData(realData => {
+      const newData = [...(realData.length > 10 ? realData.slice(1) : realData), {
+      uv: Math.floor(data),
       }];
       return newData;
     });
-  }, [setDemoData])
+  }, [setRealData])
 
-  useEffect(()=>{
-    const interval = setInterval(demoDataAdder, 200)
-    return ()=>{
-      clearInterval(interval)
+  // useEffect(()=>{
+  //   const interval = setInterval(demoDataAdder, 200)
+  //   return ()=>{
+  //     clearInterval(interval)
+  //   }
+  // }, [setDemoData])
+
+  const portDataHandler = useCallback(async () => {
+    console.log("port", port);
+    await port.open({ baudRate: 9600 });
+    const reader = port.readable.getReader();
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+        reader.releaseLock();
+        // Allow the serial port to be closed later.
+        break;
+      }
+      const decoder = new TextDecoder();
+      const decodedText = decoder.decode(value)
+      decodedText.split(`\n`).forEach((e)=>{
+        if(e.trim() == "") return;
+        console.log(`Current data: ${e.trim()}`)
+        realDataAdder(Number(e.trim()))
+      })
     }
-  }, [setDemoData])
+  }, [port]);
+
+  useEffect(() => {
+    if (!(window.navigator && "serial" in navigator)) return;
+    (async () => await portDataHandler())();
+  }, [portDataHandler, port]);
 
   return (
     <div
@@ -85,8 +108,21 @@ export default function GraphCard({
             width={graphWidHei.width}
             height={graphWidHei.height}
           >
-            <Line data={demoData} dot={false} activeDot connectNulls isAnimationActive={false} type="monotone" dataKey="pv" stroke={primaryColor} />
-            <CartesianGrid strokeOpacity={0.5} className="stroke-neutral-300" strokeWidth={0.5}/>
+            <Line
+              data={realData}
+              dot={false}
+              activeDot
+              connectNulls
+              isAnimationActive={false}
+              type="monotone"
+              dataKey="uv"
+              stroke={primaryColor}
+            />
+            <CartesianGrid
+              strokeOpacity={0.5}
+              className="stroke-neutral-300"
+              strokeWidth={0.5}
+            />
             <XAxis fontSize={12} strokeWidth={0.5} />
             <YAxis fontSize={12} strokeWidth={0.5} />
           </LineChart>

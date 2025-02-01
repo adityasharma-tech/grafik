@@ -1,6 +1,6 @@
 import {rgba} from "polished"
 
-export default function Message({primaryColor="#000", timestamp=new Date(), port="5796", message="Hello, World!"}) {
+export default function LogMessage({primaryColor="#000", timestamp=new Date(), port="5796", message="Hello, World!"}) {
   return (
     <div style={{
         backgroundColor: rgba(primaryColor, 0.01)
