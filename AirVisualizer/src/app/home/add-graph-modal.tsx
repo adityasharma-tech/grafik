@@ -23,7 +23,7 @@ export default function AddGraphModal({isOpen, setIsOpen} :{isOpen: boolean; set
           filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
         });
         await port.open({ baudRate: 9600 });
-        const reader = port.readable.getReader();
+        //const reader = port.readable.getReader();
         //   while (true) {
         //     const { value, done } = await reader.read();
         //     if (done) {
