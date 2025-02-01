@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import ReactModal from "react-modal";
 import useAppState from "../../lib/zustand/store";
 
