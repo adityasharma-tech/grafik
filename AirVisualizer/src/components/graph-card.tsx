@@ -1,6 +1,5 @@
 import { cn } from "../lib/utils";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { demoGraphData } from "../lib/constants";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function GraphCard({
