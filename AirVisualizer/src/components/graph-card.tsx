@@ -1,16 +1,14 @@
 import { cn } from "../lib/utils";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { DeviceT, PortT } from "../lib/zustand/store";
+import { useEffect, useRef, useState } from "react";
+import { DeviceT } from "../lib/zustand/store";
 
 export default function GraphCard({
   title = "Graph1",
   primaryColor = "#262626",
   disabled = true,
-  port: {port},
   device
 }: {
-  port: PortT;
   title: string;
   primaryColor: string;
   disabled: boolean;
@@ -21,7 +19,7 @@ export default function GraphCard({
     width: 500,
     height: 300,
   });
-  const [realData, setRealData] = useState<any[]>([]);
+  // const [realData, setRealData] = useState<any[]>([]);
 
   useEffect(() => {
     if (graphContainerRef.current)
@@ -31,47 +29,15 @@ export default function GraphCard({
       });
   }, [graphContainerRef]);
 
-  const realDataAdder = useCallback((data: number)=>{
-    setRealData(realData => {
-      const newData = [...(realData.length > 10 ? realData.slice(1) : realData), {
-      uv: Math.floor(data),
-      }];
-      return newData;
-    });
-  }, [setRealData])
+  // const realDataAdder = useCallback((data: number)=>{
+  //   setRealData(realData => {
+  //     const newData = [...(realData.length > 10 ? realData.slice(1) : realData), {
+  //     uv: Math.floor(data),
+  //     }];
+  //     return newData;
+  //   });
+  // }, [setRealData])
 
-  // useEffect(()=>{
-  //   const interval = setInterval(demoDataAdder, 200)
-  //   return ()=>{
-  //     clearInterval(interval)
-  //   }
-  // }, [setDemoData])
-
-  const portDataHandler = useCallback(async () => {
-    console.log("port", port);
-    await port.open({ baudRate: 9600 });
-    const reader = port.readable.getReader();
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) {
-        reader.releaseLock();
-        // Allow the serial port to be closed later.
-        break;
-      }
-      const decoder = new TextDecoder();
-      const decodedText = decoder.decode(value)
-      decodedText.split(`\n`).forEach((e)=>{
-        if(e.trim() == "") return;
-        console.log(`Current data: ${e.trim()}`)
-        realDataAdder(Number(e.trim()))
-      })
-    }
-  }, [port]);
-
-  useEffect(() => {
-    if (!(window.navigator && "serial" in navigator)) return;
-    (async () => await portDataHandler())();
-  }, [portDataHandler, port]);
 
   return (
     <div
@@ -111,13 +77,13 @@ export default function GraphCard({
             height={graphWidHei.height}
           >
             <Line
-              data={realData}
+              data={device.plottingData}
               dot={false}
               activeDot
               connectNulls
               isAnimationActive={false}
               type="monotone"
-              dataKey="uv"
+              // dataKey="uv"
               stroke={primaryColor}
             />
             <CartesianGrid

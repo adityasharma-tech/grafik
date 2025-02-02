@@ -55,16 +55,19 @@ export default function PermissionSection() {
           let messages = buffer.split(";;");
           buffer = messages.pop() || "";
           for (const msg of messages) {
-            const [meta, data] = msg.split("\t:")
-            if(!meta || !data) return;
-            const [deviceId, dataType, dataId] = meta.split(" ");
-            if(!deviceId || !dataType || !dataId) return;
-            switch(dataType.trim()){
-                case "plot":
-                    
-                case "log":
-
-            }
+            console.log(msg)
+            return;
+            // const [meta, data] = msg.split("\t:")
+            // console.log(meta, data)
+            // if(!meta || !data) return;
+            // const [deviceId, dataType, dataId] = meta.split(" ");
+            // if(!deviceId || !dataType || !dataId) return;
+            // dataState.addData({
+            //     deviceId: +deviceId,
+            //     dataId: +dataId,
+            //     dataType,
+            //     data
+            // }, index)
           }
         }
       } catch (error: any) {
@@ -99,8 +102,8 @@ export default function PermissionSection() {
         <span className="font-medium">Permission dialog</span>
       </div>
       <div className="py-5 flex flex-col justify-between h-full">
-        <div>
-          <span>
+        <div className="mb-2">
+          <span className="text-sm">
             You have to give permission to see your open ports for arduino or
             your IoT device in case of serial input from the device.
           </span>

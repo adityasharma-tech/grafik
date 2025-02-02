@@ -1,51 +1,51 @@
-import { useCallback, useEffect } from "react";
+// import { useCallback, useEffect } from "react";
 import ReactModal from "react-modal";
-import useAppState, { useDataState } from "../../lib/zustand/store";
+// import useAppState, { useDataState } from "../../lib/zustand/store";
 
 export default function AddGraphModal({isOpen, setIsOpen} :{isOpen: boolean; setIsOpen: (val: boolean)=>void}) {
 
-  const ports = useDataState((state) => state.ports);
-  const setPorts = useDataState((state) => state.setPorts);
+  // const ports = useDataState((state) => state.ports);
+  // const setPorts = useDataState((state) => state.setPorts);
 
-  const handleListPorts = useCallback(async () => {
-    if (window.navigator && "serial" in navigator) {
-      // @ts-ignore
-      const ps = await navigator.serial.getPorts();
-      for
-    }
-  }, [window]);
+  // const handleListPorts = useCallback(async () => {
+  //   if (window.navigator && "serial" in navigator) {
+  //     // @ts-ignore
+  //     const ps = await navigator.serial.getPorts();
+  //     for
+  //   }
+  // }, [window]);
 
-  const handlePermissionGesture = useCallback(async () => {
-    if (window.navigator && "serial" in navigator) {
-      try {
-        // @ts-ignore
-        const port = await navigator.serial.requestPort({
-          filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
-        });
-        await port.open({ baudRate: 9600 });
-        //const reader = port.readable.getReader();
-        //   while (true) {
-        //     const { value, done } = await reader.read();
-        //     if (done) {
-        //       // Allow the serial port to be closed later.
-        //       reader.releaseLock();
-        //       break;
-        //     }
-        //     const decoder = new TextDecoder();
-        //     console.log(decoder.decode(value));
-        //   }
-      } catch (error: any) {
-        console.error(`Error occured: ${error.message}`);
-      } finally {
-        await handleListPorts();
-      }
-    }
-  }, [window, navigator, handleListPorts]);
+  // const handlePermissionGesture = useCallback(async () => {
+  //   if (window.navigator && "serial" in navigator) {
+  //     try {
+  //       // @ts-ignore
+  //       const port = await navigator.serial.requestPort({
+  //         filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
+  //       });
+  //       await port.open({ baudRate: 9600 });
+  //       //const reader = port.readable.getReader();
+  //       //   while (true) {
+  //       //     const { value, done } = await reader.read();
+  //       //     if (done) {
+  //       //       // Allow the serial port to be closed later.
+  //       //       reader.releaseLock();
+  //       //       break;
+  //       //     }
+  //       //     const decoder = new TextDecoder();
+  //       //     console.log(decoder.decode(value));
+  //       //   }
+  //     } catch (error: any) {
+  //       console.error(`Error occured: ${error.message}`);
+  //     } finally {
+  //       await handleListPorts();
+  //     }
+  //   }
+  // }, [window, navigator, handleListPorts]);
 
-  useEffect(() => {
-    if (!(window.navigator && "serial" in navigator)) return;
-    (async () => await handleListPorts())();
-  }, [handleListPorts]);
+  // useEffect(() => {
+  //   if (!(window.navigator && "serial" in navigator)) return;
+  //   (async () => await handleListPorts())();
+  // }, [handleListPorts]);
 
   return (
     <ReactModal
@@ -91,20 +91,20 @@ export default function AddGraphModal({isOpen, setIsOpen} :{isOpen: boolean; set
           </div>
           <div>
             <table className="w-full text-center">
-                <tr className="bg-neutral-100">
+                {/* <tr className="bg-neutral-100">
                     <th>Usb Product Id</th>
                     <th>Usb Vendor Id</th>
                 </tr>
                 {ports.map((port, index)=><tr key={index} className="bg-black/10">
                 <td>{port.getInfo().usbProductId}</td>
                 <td>{port.getInfo().usbVendorId}</td>
-            </tr>)}
+            </tr>)} */}
             </table>
             
           </div>
           <div className="flex justify-end h-full items-end">
             <button
-              onClick={handlePermissionGesture}
+              // onClick={handlePermissionGesture}
               className="font-medium underline px-10 py-5 bg-neutral-800 rounded-full text-white hover:opacity-90 cursor-pointer"
             >
               Select ports & grant ports access.

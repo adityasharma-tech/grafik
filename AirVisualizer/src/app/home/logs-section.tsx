@@ -1,28 +1,28 @@
-import { FormEventHandler, useCallback, useEffect } from "react";
+import { FormEventHandler } from "react";
 import LogMessage from "../../components/log-message";
 import useAppState from "../../lib/zustand/store";
 import PermissionSection from "./permission-section";
 
 export default function LogsSection() {
   const allInfo = useAppState((state) => state.infos);
-  const addNewInfo = useAppState((state) => state.addInfo);
+  // const addNewInfo = useAppState((state) => state.addInfo);
 
-  const handleSerialCommunication = useCallback(async () => {
-    if (window.navigator && "serial" in navigator) {
-      console.log("I am called.");
-      addNewInfo("Requesting serial port...");
-      try {
-        // @ts-ignore
-        const port = await navigator.serial.requestPort({
-          filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
-        });
-        console.log(port);
-      } catch (error: any) {
-        console.error(`Error: ${error.message}`);
-        addNewInfo(`Error: ${error.message}`);
-      }
-    }
-  }, [window, addNewInfo]);
+  // const handleSerialCommunication = useCallback(async () => {
+  //   if (window.navigator && "serial" in navigator) {
+  //     console.log("I am called.");
+  //     addNewInfo("Requesting serial port...");
+  //     try {
+  //       // @ts-ignore
+  //       const port = await navigator.serial.requestPort({
+  //         filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
+  //       });
+  //       console.log(port);
+  //     } catch (error: any) {
+  //       console.error(`Error: ${error.message}`);
+  //       addNewInfo(`Error: ${error.message}`);
+  //     }
+  //   }
+  // }, [window, addNewInfo]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
