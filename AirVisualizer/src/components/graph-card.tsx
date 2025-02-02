@@ -1,17 +1,20 @@
 import { cn } from "../lib/utils";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { DeviceT, PortT } from "../lib/zustand/store";
 
 export default function GraphCard({
   title = "Graph1",
   primaryColor = "#262626",
   disabled = true,
-  port,
+  port: {port},
+  device
 }: {
-  port: any;
+  port: PortT;
   title: string;
   primaryColor: string;
   disabled: boolean;
+  device: DeviceT;
 }) {
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const [graphWidHei, setGraphWidHei] = useState({

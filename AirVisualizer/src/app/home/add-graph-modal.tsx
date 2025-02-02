@@ -1,17 +1,17 @@
 import { useCallback, useEffect } from "react";
 import ReactModal from "react-modal";
-import useAppState from "../../lib/zustand/store";
+import useAppState, { useDataState } from "../../lib/zustand/store";
 
 export default function AddGraphModal({isOpen, setIsOpen} :{isOpen: boolean; setIsOpen: (val: boolean)=>void}) {
 
-  const ports = useAppState((state) => state.ports);
-  const setPorts = useAppState((state) => state.setPorts);
+  const ports = useDataState((state) => state.ports);
+  const setPorts = useDataState((state) => state.setPorts);
 
   const handleListPorts = useCallback(async () => {
     if (window.navigator && "serial" in navigator) {
       // @ts-ignore
       const ps = await navigator.serial.getPorts();
-      setPorts(ps);
+      for
     }
   }, [window]);
 

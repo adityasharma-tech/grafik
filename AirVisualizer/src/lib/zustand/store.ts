@@ -4,26 +4,30 @@ type InfoT = {
   count: number;
   message: string;
 }
-
-type DeviceT = {
-  id: string; // unique id
-}
-
-type PortT = {
-  port: any;
-  devices: DeviceT[]
-}
-
 interface AppState {
   infos: InfoT[];
   addInfo: (i: string) => void;
 }
 
+export type DeviceT = {
+  id: string; // unique id
+  loggerId: number; // unique id
+  plotterId: number; // unique id
+}
+
+export type PortT = {
+  port: any;
+  devices: DeviceT[]
+}
+
+
 interface DataState {
   ports: PortT[];
+  running: boolean;
   setPorts: (data: PortT[]) => void;
   createPort: (data: PortT) => void;
   destroyPort: (data: PortT) => void;
+  toogleRunning: ()=>void;
 }
 
 const useAppState = create<AppState>()((set) => ({
@@ -59,7 +63,6 @@ const useDataState = create<DataState>()((set) => ({
     const ports = state.ports;
     ports.forEach((port)=>{
       if(port.port == data.port) {
-        console.warn("Port already exists.");
         return {};
       }
     })
@@ -69,7 +72,9 @@ const useDataState = create<DataState>()((set) => ({
   destroyPort: (data) => set((state)=>{
     const ports = state.ports;
     return {ports: ports.filter((port)=>port.port == data.port)}
-  })
+  }),
+  running: false,
+  toogleRunning: ()=>set((state)=>({running: !state.running}))
 }))
 
 export {
