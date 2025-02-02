@@ -35,7 +35,7 @@ class GrafikConfig {
 
     public:
         int createWifiConfig(std::string id){
-            WifiConfig* wifiConfig = this->findWifiConfig(&id) 
+            // WifiConfig* wifiConfig = this->findWifiConfig(&id) 
         }
 
         int createBluetoothConfig() {

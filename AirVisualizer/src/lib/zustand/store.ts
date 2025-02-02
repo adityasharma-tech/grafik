@@ -5,12 +5,25 @@ type InfoT = {
   message: string;
 }
 
+type DeviceT = {
+  id: string; // unique id
+}
+
+type PortT = {
+  port: any;
+  devices: DeviceT[]
+}
+
 interface AppState {
   infos: InfoT[];
   addInfo: (i: string) => void;
-  graphs: [];
-  ports: any[];
-  setPorts: (i: any)=>void;
+}
+
+interface DataState {
+  ports: PortT[];
+  setPorts: (data: PortT[]) => void;
+  createPort: (data: PortT) => void;
+  destroyPort: (data: PortT) => void;
 }
 
 const useAppState = create<AppState>()((set) => ({
@@ -36,10 +49,31 @@ const useAppState = create<AppState>()((set) => ({
       message: info
     })    
     return { infos: newInfosState }
-  }),
-  graphs: [],
-  ports: [],
-  setPorts: (info) => set(()=>({ports: info}))
+  })
 }))
+
+const useDataState = create<DataState>()((set) => ({
+  ports: [],
+  setPorts: (data) => set(()=>({ ports: data })),
+  createPort: (data) => set((state)=>{
+    const ports = state.ports;
+    ports.forEach((port)=>{
+      if(port.port == data.port) {
+        console.warn("Port already exists.");
+        return {};
+      }
+    })
+    
+    return { ports: [data] }
+  }),
+  destroyPort: (data) => set((state)=>{
+    const ports = state.ports;
+    return {ports: ports.filter((port)=>port.port == data.port)}
+  })
+}))
+
+export {
+  useDataState
+}
 
 export default useAppState;
