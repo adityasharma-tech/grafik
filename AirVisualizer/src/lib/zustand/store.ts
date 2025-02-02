@@ -10,7 +10,7 @@ interface AppState {
 }
 
 export type DeviceT = {
-  id?: number; // unique id
+  id: number; // unique id
   loggerId?: number; // unique id
   plotterId?: number; // unique id
   plottingData: number[];
@@ -38,6 +38,7 @@ interface DataState {
     },
     index: number
   ) => void;
+  addDevice: (portIndex: number, deviceId: number, plotterId?: number, loggerId?: number) => void;
 }
 
 const useAppState = create<AppState>()((set) => ({
@@ -87,55 +88,71 @@ const useDataState = create<DataState>()((set) => ({
     }),
   running: false,
   toogleRunning: () => set((state) => ({ running: !state.running })),
-  addData: () =>
+  addData: (data, index) =>
     set((state) => {
       const ports = state.ports;
-      // let port = ports[index];
-      // console.log(data, index)
-      // switch (data.dataType) {
-      //   case "plot":
-      //     const pDeviceIndex = port.devices.findIndex(
-      //       (d) => d.plotterId === data.dataId
-      //     );
-      //     if (pDeviceIndex != -1) {
-      //       port.devices[pDeviceIndex].plottingData = [
-      //         ...port.devices[pDeviceIndex].plottingData,
-      //         +data.data,
-      //       ];
-      //     } else {
-      //       port.devices = [
-      //         ...port.devices,
-      //         {
-      //           logsData: [],
-      //           plottingData: [+data.data],
-      //           id: data.deviceId,
-      //           plotterId: data.dataId,
-      //         },
-      //       ];
-      //     }
-      //   case "log":
-      //     const deviceIndex = port.devices.findIndex(
-      //       (d) => d.loggerId === data.dataId
-      //     );
-      //     if (deviceIndex != -1) {
-      //       port.devices[deviceIndex].logsData = [
-      //         ...port.devices[deviceIndex].logsData,
-      //         data.data,
-      //       ];
-      //     } else {
-      //       port.devices = [
-      //         ...port.devices,
-      //         {
-      //           logsData: [data.data],
-      //           plottingData: [],
-      //           id: data.deviceId,
-      //           loggerId: data.dataId,
-      //         },
-      //       ];
-      //     }
-      // }
+      let port = ports[index];
+      switch (data.dataType.trim()) {
+        case "plot":
+          const pDeviceIndex = port.devices.findIndex(
+            (d) => d.plotterId == data.dataId
+          );
+          if (pDeviceIndex != -1) {
+            console.log("Here")
+            port.devices[pDeviceIndex].plottingData = [
+              ...port.devices[pDeviceIndex].plottingData,
+              +data.data.trim(),
+            ];
+          } else {
+            console.log("Not here")
+            console.log(ports)
+            port.devices = [
+              ...port.devices,
+              {
+                logsData: [],
+                plottingData: [+data.data.trim()],
+                id: data.deviceId,
+                plotterId: data.dataId,
+              },
+            ];
+          }
+          break;
+        case "log":
+          const deviceIndex = port.devices.findIndex(
+            (d) => d.loggerId === data.dataId
+          );
+          if (deviceIndex != -1) {
+            port.devices[deviceIndex].logsData = [
+              ...port.devices[deviceIndex].logsData,
+              data.data,
+            ];
+          } else {
+            port.devices = [
+              ...port.devices,
+              {
+                logsData: [data.data],
+                plottingData: [],
+                id: data.deviceId,
+                loggerId: data.dataId,
+              },
+            ];
+          }
+          break;
+      }
       return { ports };
     }),
+    addDevice: (portIndx, did, pid, lid) => set((state)=>{
+      const ports = state.ports;
+      ports[portIndx].devices = [...ports[portIndx].devices, {
+        id: did,
+        logsData: [],
+        plottingData: [],
+        loggerId: lid,
+        plotterId: pid
+      }]
+      console.log(ports)
+      return { ports }
+    })
 }));
 
 export { useDataState };

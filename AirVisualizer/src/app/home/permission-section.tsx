@@ -4,6 +4,8 @@ import { useDataState } from "../../lib/zustand/store";
 export default function PermissionSection() {
   const dataState = useDataState((state) => state);
 
+  
+
   // callbacks
   const handleListPorts = useCallback(async () => {
     if (window.navigator && "serial" in navigator) {
@@ -12,7 +14,7 @@ export default function PermissionSection() {
       for (const port of ps) {
         dataState.createPort({
           port,
-          devices: [],
+          devices: []
         });
       }
     }
@@ -55,19 +57,19 @@ export default function PermissionSection() {
           let messages = buffer.split(";;");
           buffer = messages.pop() || "";
           for (const msg of messages) {
-            console.log(msg)
-            return;
-            // const [meta, data] = msg.split("\t:")
-            // console.log(meta, data)
-            // if(!meta || !data) return;
-            // const [deviceId, dataType, dataId] = meta.split(" ");
-            // if(!deviceId || !dataType || !dataId) return;
-            // dataState.addData({
-            //     deviceId: +deviceId,
-            //     dataId: +dataId,
-            //     dataType,
-            //     data
-            // }, index)
+            // console.log(msg)
+            const [meta, data] = msg.split("\t:")
+            if(meta && data){
+              const [deviceId, dataType, dataId] = meta.split(" ");
+              console.log(`deviceId: ${deviceId.replace("\n", "").trim()}, dataType: ${dataType}, dataId: ${dataId}`)
+              if(deviceId && dataType && dataId && deviceId.trim() != "" && dataType.trim() != "" && dataId.trim() != "")
+              dataState.addData({
+                    deviceId: +deviceId,
+                    dataId: +dataId,
+                    dataType,
+                    data
+                }, index)
+              }
           }
         }
       } catch (error: any) {
@@ -83,7 +85,7 @@ export default function PermissionSection() {
   useEffect(() => {
     if (!(window.navigator && "serial" in navigator)) return;
     (async () => await handleListPorts())();
-  }, [handleListPorts]);
+  }, []);
 
   useEffect(() => {
     if (!dataState.running) return;
@@ -116,14 +118,14 @@ export default function PermissionSection() {
                 <th>Usb Vendor Id</th>
               </tr>
             </thead>
-            <tbody>
+            {/* <tbody>
               {dataState.ports.map((port, index) => (
                 <tr key={index} className="bg-black/10">
                   <td>{port.port.getInfo().usbProductId}</td>
                   <td>{port.port.getInfo().usbVendorId}</td>
                 </tr>
               ))}
-            </tbody>
+            </tbody> */}
           </table>
         </div>
         <div className="flex justify-end h-full items-end gap-x-2">
