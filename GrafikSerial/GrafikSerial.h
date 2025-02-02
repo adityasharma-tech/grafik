@@ -1,39 +1,36 @@
-#ifndef GRAFIK_LOGGER_H
-#define GRAFIK_LOGGER_H
+#ifndef GRAFIK_SERIAL_H
+#define GRAFIK_SERIAL_H
 
-#include <Arduino.h>
+#include <Arduino.h>  // Required for Serial communication
 
 class GrafikLogger {
-    private:
-        int loggerId;
-        int deviceId;
+private:
+    int loggerId;
+    int deviceId;
 
-    public:
-        GrafikLogger (int deviceId, int loggerId);
-
-        void log(const char* message);
+public:
+    GrafikLogger(int deviceId, int loggerId);
+    void log(const char* message);
 };
 
 class GrafikPlotter {
-    private:
-        int plotterId;
-        int deviceId;
+private:
+    int plotterId;
+    int deviceId;
 
-    public:
-        GrafikPlotter (int deviceId, int plotterId);
-
-        void plotData(float data);
+public:
+    GrafikPlotter(int deviceId, int plotterId);
+    void plotData(float data);
 };
 
 class Grafik {
-    private:
-        int deviceId;
-    public:
-        Grafik (int deviceId);
+private:
+    int deviceId;
 
-        GrafikLogger createLogger(int loggerId);
-
-        GrafikPlotter createPlotter(int plotterId);
+public:
+    Grafik(int deviceId);
+    GrafikLogger* createLogger(int loggerId);
+    GrafikPlotter* createPlotter(int plotterId);
 };
 
-#endif
+#endif  // GRAFIK_SERIAL_H

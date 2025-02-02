@@ -24,7 +24,9 @@ void GrafikPlotter::plotData(float data) {
 }
 
 // Grafik Implementation
-Grafik::Grafik(int deviceId) : deviceId(deviceId) {}
+Grafik::Grafik(int deviceId) : deviceId(deviceId) {
+  Serial.begin(9600);
+}
 
 GrafikLogger* Grafik::createLogger(int loggerId) {
     return new GrafikLogger(deviceId, loggerId);
