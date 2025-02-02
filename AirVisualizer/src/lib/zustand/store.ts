@@ -9,17 +9,31 @@ interface AppState {
   addInfo: (i: string) => void;
 }
 
-export type DeviceT = {
-  id: number; // unique id
-  loggerId?: number; // unique id
-  plotterId?: number; // unique id
-  plottingData: number[];
-  logsData: string[];
+type LogT = {
+  log: string;
+  timestamp: Date;
+};
+
+type LoggerT = {
+  loggerId: number;
+  logs: LogT[];
+};
+
+type PlotT = {
+  dataPoint: number;
+  timestamp: Date;
+};
+
+export type PlotterT = {
+  plotterId: number;
+  plots: PlotT[];
 };
 
 export type PortT = {
   port: any;
-  devices: DeviceT[];
+  deviceId?: number;
+  loggers: LoggerT[];
+  plotters: PlotterT[];
 };
 
 interface DataState {
@@ -29,16 +43,9 @@ interface DataState {
   createPort: (data: PortT) => void;
   destroyPort: (data: PortT) => void;
   toogleRunning: () => void;
-  addData: (
-    data: {
-      deviceId: number;
-      dataType: string;
-      dataId: number;
-      data: string;
-    },
-    index: number
-  ) => void;
-  addDevice: (portIndex: number, deviceId: number, plotterId?: number, loggerId?: number) => void;
+  setDeviceId: (data: { deviceId: number; portIndex: number }) => void;
+  addPlotter: (data: { deviceId: number; plotterId: number }) => void;
+  addLogger: (data: { deviceId: number; loggerId: number }) => void;
 }
 
 const useAppState = create<AppState>()((set) => ({
@@ -70,6 +77,7 @@ const useAppState = create<AppState>()((set) => ({
 
 const useDataState = create<DataState>()((set) => ({
   ports: [],
+  running: false,
   setPorts: (data) => set(() => ({ ports: data })),
   createPort: (data) =>
     set((state) => {
@@ -86,73 +94,60 @@ const useDataState = create<DataState>()((set) => ({
       const ports = state.ports;
       return { ports: ports.filter((port) => port.port == data.port) };
     }),
-  running: false,
+    
+
   toogleRunning: () => set((state) => ({ running: !state.running })),
-  addData: (data, index) =>
+
+  setDeviceId: (data) =>
     set((state) => {
       const ports = state.ports;
-      let port = ports[index];
-      switch (data.dataType.trim()) {
-        case "plot":
-          const pDeviceIndex = port.devices.findIndex(
-            (d) => d.plotterId == data.dataId
-          );
-          if (pDeviceIndex != -1) {
-            console.log("Here")
-            port.devices[pDeviceIndex].plottingData = [
-              ...port.devices[pDeviceIndex].plottingData,
-              +data.data.trim(),
-            ];
-          } else {
-            console.log("Not here")
-            console.log(ports)
-            port.devices = [
-              ...port.devices,
-              {
-                logsData: [],
-                plottingData: [+data.data.trim()],
-                id: data.deviceId,
-                plotterId: data.dataId,
-              },
-            ];
-          }
-          break;
-        case "log":
-          const deviceIndex = port.devices.findIndex(
-            (d) => d.loggerId === data.dataId
-          );
-          if (deviceIndex != -1) {
-            port.devices[deviceIndex].logsData = [
-              ...port.devices[deviceIndex].logsData,
-              data.data,
-            ];
-          } else {
-            port.devices = [
-              ...port.devices,
-              {
-                logsData: [data.data],
-                plottingData: [],
-                id: data.deviceId,
-                loggerId: data.dataId,
-              },
-            ];
-          }
-          break;
-      }
+
+      ports[data.portIndex].deviceId = data.deviceId;
+      console.log("setDeviceId",ports)
       return { ports };
     }),
-    addDevice: (portIndx, did, pid, lid) => set((state)=>{
-      const ports = state.ports;
-      ports[portIndx].devices = [...ports[portIndx].devices, {
-        id: did,
-        logsData: [],
-        plottingData: [],
-        loggerId: lid,
-        plotterId: pid
-      }]
-      console.log(ports)
-      return { ports }
-    })
+
+  addPlotter: (data) =>
+    set((state) => {
+      let ports = state.ports;
+      console.log("before ports: ", ports);
+      const plotters = ports.find(
+        (value) => value.deviceId == data.deviceId
+      )?.plotters;
+
+      const plotter = plotters?.find(
+        (value) => value.plotterId == data.plotterId
+      );
+
+      if (!plotter) {
+        plotters?.push({
+          plots: [],
+          plotterId: data.plotterId,
+        });
+      }
+      console.log("after ports: ", ports);
+      return { ports };
+    }),
+
+  addLogger: (data) =>
+    set((state) => {
+      let ports = state.ports;
+      console.log("before ports: ", ports);
+      const loggers = ports.find(
+        (value) => value.deviceId == data.deviceId
+      )?.loggers;
+
+      const logger = loggers?.find((value) => value.loggerId == data.loggerId);
+
+      if (!logger) {
+        loggers?.push({
+          logs: [],
+          loggerId: data.loggerId,
+        });
+      }
+      console.log("after ports: ", ports);
+      return { ports };
+    }),
 }));
 
 export { useDataState };

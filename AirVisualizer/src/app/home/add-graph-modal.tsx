@@ -1,6 +1,7 @@
 import ReactModal from "react-modal";
 import { useDataState } from "../../lib/zustand/store";
-import { MouseEventHandler, useCallback, useEffect, useState } from "react";
+import { FormEventHandler, useCallback, useEffect, useState } from "react";
+import AddDeviceModal from "./add-device-dialog";
 
 export default function AddGraphModal({
   isOpen,
@@ -11,26 +12,31 @@ export default function AddGraphModal({
 }) {
   const dataState = useDataState((state) => state);
 
-  const [selectedPort, setSelectedPort] = useState(0)
-  const [deviceId, setDeviceId] = useState(0)
-  const [plotterId, setPlotterId] = useState(123)
-  const [name, setName] = useState<string>(`${plotterId}`)
+  const [deviceAddDialog, setDeviceAddDialog] = useState(false);
+  const [deviceId, setDeviceId] = useState<string>("");
+  const [plotterId, setPlotterId] = useState<string>("");
   // const [] = useState()
 
-    const ports = useDataState(state=>state.ports)
-    useEffect(()=>{
-      console.log(ports)
-    }, [ports])
+  const ports = useDataState((state) => state.ports);
+  useEffect(() => {
+    console.log(ports);
+  }, [ports]);
 
-  const handleAddPlotter:MouseEventHandler<HTMLButtonElement> = useCallback((e)=>{
-    e.preventDefault();
-    dataState.addDevice(selectedPort, deviceId, plotterId);
-    setIsOpen(false)
-  }, [dataState, setIsOpen])
+  const handleAddPlotter: FormEventHandler<HTMLFormElement> = useCallback(
+    (e) => {
+      e.preventDefault();
+      dataState.addPlotter({
+        deviceId: +deviceId,
+        plotterId: +plotterId
+      })
+      setIsOpen(false);
+    },
+    [dataState, setIsOpen]
+  );
 
   return (
     <ReactModal
-    ariaHideApp={false}
+      ariaHideApp={false}
       isOpen={isOpen}
       contentLabel="Add new graph"
       style={{
@@ -40,6 +46,7 @@ export default function AddGraphModal({
           alignSelf: "center",
           marginLeft: "auto",
           marginRight: "auto",
+          borderRadius: 12,
         },
       }}
     >
@@ -64,41 +71,60 @@ export default function AddGraphModal({
             </svg>
           </button>
         </div>
-        <form className="py-5 flex flex-col justify-between h-full">
-          <div className="flex flex-col gap-y-2">
-            <div className="flex gap-x-2 bg-neutral-100 rounded-lg px-2 py-1 justify-around">
-              <span>
-                Select the port
-              </span>
-              <select onChange={(e)=>setSelectedPort(+e.target.value)} value={selectedPort} className="underline">
-                {dataState.ports.map((_, index) => (
-                  <option value={index} key={index}>Port: {index}</option>
-                ))}
-              </select>
+        <form onSubmit={handleAddPlotter} className="py-5 flex flex-col justify-between h-full">
+          <div className="flex flex-col gap-y-4">
+            <div className="flex">
+              <span className="min-w-38 my-auto">Select Device: </span>
+              {(dataState.ports.length > 0 && (dataState.ports.length == 1 && (dataState.ports[0].deviceId?.toString() ? true : false))) ? 
+              <select onChange={(e)=>setDeviceId(e.target.value)} value={deviceId.toString()} className="min-w-32 bg-neutral-100 rounded-lg px-3 py-2">
+                <option value={""}>--select--</option>
+                {dataState.ports.map((port, index)=>port.deviceId?.toString() ? <option key={index} value={port.deviceId.toString()}>DEVICE {port.deviceId.toString()}</option> : null)}
+              </select> : null}
+              <button onClick={()=>setDeviceAddDialog(!deviceAddDialog)} type="button" className="bg-neutral-100 focus-within:outline-none  rounded-lg hover:bg-neutral-300 px-1 py-1 w-9 h-9 flex items-center justify-center my-auto mx-2 cursor-pointer">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={20}
+                  height={20}
+                  viewBox="0 0 24 24"
+                >
+                  <title />
+                  <g
+                    fill="none"
+                    stroke="#000"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    data-name="add"
+                  >
+                    <path d="M12 19V5M5 12h14" />
+                  </g>
+                </svg>
+              </button>
             </div>
-            <div className="flex gap-x-2 bg-neutral-100 rounded-lg px-2 py-1 justify-around">
-              <span>Name: </span>
-                <input placeholder="123" type="text" value={name} onChange={(e)=>setName(e.target.value)}/>
-            </div>
-            <div className="flex gap-x-2 bg-neutral-100 rounded-lg px-2 py-1 justify-around">
-              <span>Plotter Id: </span>
-                <input placeholder="123" type="number" value={plotterId} onChange={(e)=>setPlotterId(+e.target.value)}/>
-            </div>
-            <div className="flex gap-x-2 bg-neutral-100 rounded-lg px-2 py-1 justify-around">
-              <span>Select device: </span>
-                <input placeholder="123" type="number" value={deviceId} onChange={(e)=>setDeviceId(+e.target.value)}/>
+            <div className="flex">
+              <span className="min-w-38 my-auto">Plotter Id: </span>
+              <input
+              required
+              value={plotterId}
+              onChange={(e)=>setPlotterId(e.target.value)}
+                placeholder="Enter same plotter id as on the IoT device."
+                type="text"
+                className="primary-input"
+              />
             </div>
           </div>
           <div className="flex justify-end h-full items-end">
             <button
-              onClick={handleAddPlotter}
-              className="font-medium px-5 py-3 bg-neutral-800 rounded-xl text-white hover:opacity-90 cursor-pointer"
+            type="submit"
+            disabled={plotterId.trim()=="" || !deviceId}
+              className="font-medium px-5 disabled:opacity-60 py-3 disabled:cursor-not-allowed bg-neutral-800 rounded-xl text-white hover:opacity-90 cursor-pointer"
             >
               Add plotter
             </button>
           </div>
         </form>
       </div>
+      <AddDeviceModal isOpen={deviceAddDialog} setIsOpen={setDeviceAddDialog}/>
     </ReactModal>
   );
 }

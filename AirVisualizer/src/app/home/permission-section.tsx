@@ -14,7 +14,9 @@ export default function PermissionSection() {
       for (const port of ps) {
         dataState.createPort({
           port,
-          devices: []
+          deviceId: undefined,
+          loggers: [],
+          plotters: []
         });
       }
     }
@@ -63,12 +65,7 @@ export default function PermissionSection() {
               const [deviceId, dataType, dataId] = meta.split(" ");
               console.log(`deviceId: ${deviceId.replace("\n", "").trim()}, dataType: ${dataType}, dataId: ${dataId}`)
               if(deviceId && dataType && dataId && deviceId.trim() != "" && dataType.trim() != "" && dataId.trim() != "")
-              dataState.addData({
-                    deviceId: +deviceId,
-                    dataId: +dataId,
-                    dataType,
-                    data
-                }, index)
+              {}
               }
           }
         }
@@ -118,14 +115,14 @@ export default function PermissionSection() {
                 <th>Usb Vendor Id</th>
               </tr>
             </thead>
-            {/* <tbody>
+            <tbody>
               {dataState.ports.map((port, index) => (
                 <tr key={index} className="bg-black/10">
                   <td>{port.port.getInfo().usbProductId}</td>
                   <td>{port.port.getInfo().usbVendorId}</td>
                 </tr>
               ))}
-            </tbody> */}
+            </tbody>
           </table>
         </div>
         <div className="flex justify-end h-full items-end gap-x-2">

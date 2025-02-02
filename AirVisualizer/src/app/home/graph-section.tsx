@@ -9,15 +9,15 @@ export default function GraphSection() {
   return (
     <section className="h-full w-full overflow-y-auto px-1">
       {
-        ports.length > 0 && ports[0].devices.map((device, index) => (
-          <GraphCard
+        ports.length > 0  ? ports.map((device, index) => (
+          device.plotters.map((plotter)=><GraphCard
             key={index}
-            device={device}
+            plotter={plotter}
             disabled={false}
             primaryColor="#000"
             title="Arduino UNO"
-          />
-        ))
+          />)
+        )): null
       }
       <div>
         <div onClick={()=>setIsOpen(!isOpen)} className="text-center py-10 bg-gray-50 hover:bg-gray-100 cursor-pointer rounded-lg border-dotted border border-neutral-400 ">

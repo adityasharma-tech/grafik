@@ -1,18 +1,18 @@
 import { cn } from "../lib/utils";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { useEffect, useRef, useState } from "react";
-import { DeviceT } from "../lib/zustand/store";
+import { PlotterT } from "../lib/zustand/store";
 
 export default function GraphCard({
   title = "Graph1",
   primaryColor = "#262626",
   disabled = true,
-  device
+  plotter
 }: {
   title: string;
   primaryColor: string;
   disabled: boolean;
-  device: DeviceT;
+  plotter: PlotterT;
 }) {
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const [graphWidHei, setGraphWidHei] = useState({
@@ -77,13 +77,13 @@ export default function GraphCard({
             height={graphWidHei.height}
           >
             <Line
-              data={device.plottingData}
+              data={plotter.plots}
               dot={false}
               activeDot
               connectNulls
               isAnimationActive={false}
               type="monotone"
-              // dataKey="uv"
+              dataKey="uv"
               stroke={primaryColor}
             />
             <CartesianGrid
