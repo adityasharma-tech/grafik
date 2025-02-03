@@ -9,16 +9,16 @@ export function cn(...inputs: ClassValue[]) {
 export function getRandomColor() {
   // Predefined set of 10 unique color values in hex format
   const colors = [
-    '#F87171', // bg-rose-600
-    '#FBBF24', // bg-yellow-400
-    '#34D399', // bg-teal-400
-    '#60A5FA', // bg-blue-400
-    '#9B84FC', // bg-indigo-400
-    '#F472B6', // bg-pink-400
-    '#A3E635', // bg-lime-400
-    '#FB7185', // bg-rose-500
-    '#E879F9', // bg-violet-400
-    '#FBBF24'  // bg-amber-400
+    '#B91C1C', // bg-red-700
+    '#B45309', // bg-yellow-700
+    '#065F46', // bg-teal-700
+    '#1D4ED8', // bg-blue-700
+    '#5B21B6', // bg-indigo-700
+    '#9D174D', // bg-pink-700
+    '#4D7C0F', // bg-lime-700
+    '#BE123C', // bg-rose-700
+    '#7E22CE', // bg-violet-700
+    '#92400E'  // bg-amber-700
   ];
 
   // Randomly select a color from the array

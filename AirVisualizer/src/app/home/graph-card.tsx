@@ -61,7 +61,7 @@ export default function GraphCard({
         outlineColor: primaryColor,
       }}
       className={cn(
-        "min-h-56 rounded-lg flex flex-col px-3 py-2 mb-2 first:mt-0.5 relative bg-white aria-disabled:opacity-60 aria-disabled:hover:outline-1 last:mb-0 outline hover:outline-[2px] transition-all"
+        "min-h-56 overflow-x-hidden rounded-lg flex flex-col px-3 py-2 mb-2 first:mt-0.5 relative bg-white aria-disabled:opacity-60 aria-disabled:hover:outline-1 last:mb-0 outline hover:outline-[2px] transition-all"
       )}
     >
       {disabled ? (
