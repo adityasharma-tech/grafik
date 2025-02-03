@@ -1,11 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDataState } from "../../lib/zustand/store";
 
 export default function PermissionSection() {
   const dataState = useDataState((state) => state);
 
-  
-
+  const [isRunning, setIsRunning] = useState<boolean>(dataState.running);
   // callbacks
   const handleListPorts = useCallback(async () => {
     if (window.navigator && "serial" in navigator) {
@@ -16,7 +15,7 @@ export default function PermissionSection() {
           port,
           deviceId: undefined,
           loggers: [],
-          plotters: []
+          plotters: [],
         });
       }
     }
@@ -39,6 +38,7 @@ export default function PermissionSection() {
 
   const runPort = useCallback(
     async (port: any, index: number) => {
+      setIsRunning(true)
       if (!(window.navigator && "serial" in navigator)) return;
       try {
         try {
@@ -53,36 +53,48 @@ export default function PermissionSection() {
             reader.releaseLock();
             break;
           }
-          const decodedValue = (new TextDecoder()).decode(value);
+          if(!isRunning){
+            console.log("Is this correct.")
+            await reader.releaseLock();
+            console.log(port);
+            break;
+          }
+          const decodedValue = new TextDecoder().decode(value);
           buffer += decodedValue;
 
           let messages = buffer.split(";;");
           buffer = messages.pop() || "";
           for (const msg of messages) {
             // console.log(msg)
-            const [meta, data] = msg.split("\t:")
-            if(meta && data){
+            const [meta, data] = msg.split("\t:");
+            if (meta && data) {
               const [deviceId, dataType, dataId] = meta.split(" ");
-              if(deviceId && dataType && dataId && deviceId.trim() != "" && dataType.trim() != "" && dataId.trim() != "")
-              {
-                switch(dataType){
+              if (
+                deviceId &&
+                dataType &&
+                dataId &&
+                deviceId.trim() != "" &&
+                dataType.trim() != "" &&
+                dataId.trim() != ""
+              ) {
+                switch (dataType) {
                   case "plot":
                     dataState.addPlottingData({
                       deviceId: +deviceId.trim(),
                       plotterId: +dataId.trim(),
-                      dataPoint: +data
-                    })
+                      dataPoint: +data,
+                    });
                     break;
                   case "log":
                     dataState.addLoggingData({
                       deviceId: +deviceId.trim(),
                       loggerId: +dataId.trim(),
-                      message: data
-                    })
+                      message: data,
+                    });
                     break;
                 }
               }
-              }
+            }
           }
         }
       } catch (error: any) {
@@ -92,7 +104,7 @@ export default function PermissionSection() {
         );
       }
     },
-    [window, navigator]
+    [window, navigator, dataState.running, TextDecoder, dataState.addPlottingData, dataState.addLoggingData, isRunning]
   );
 
   useEffect(() => {
@@ -102,14 +114,17 @@ export default function PermissionSection() {
 
   useEffect(() => {
     if (!dataState.running) return;
-      (async () => {
-        await Promise.all(
-          dataState.ports.map((portData, index) =>
-            runPort(portData.port, index)
-          )
-        );
-      })();
+    (async () => {
+      await Promise.all(
+        dataState.ports.map((portData, index) => runPort(portData.port, index))
+      );
+    })();
   }, [dataState.running]);
+
+  useEffect(()=>{
+    setIsRunning(dataState.running)
+    console.log(dataState.running)
+  }, [dataState.running])
 
   return (
     <div className="border bg-white border-neutral-400 mt-2 rounded-lg p-2">
@@ -143,12 +158,8 @@ export default function PermissionSection() {
         </div>
         <div className="flex justify-end h-full items-end gap-x-2">
           <button
-            onClick={()=>{
-                if(window && dataState.running){
-                    window.location.reload();
-                    return;
-                }
-                dataState.toogleRunning();
+            onClick={async () => {
+              dataState.toogleRunning();
             }}
             aria-checked={dataState.running}
             className="font-medium px-5 py-3 my-3 bg-rose-600 aria-checked:bg-green-700 rounded-full text-white hover:opacity-90 cursor-pointer"

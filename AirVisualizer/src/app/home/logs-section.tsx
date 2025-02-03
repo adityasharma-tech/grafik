@@ -16,7 +16,6 @@ export default function LogsSection() {
     useEffect(()=>{
       const interval = setInterval(()=>{
         setUpdateTrigger(prev=>Math.random()+prev)
-        console.log(JSON.stringify(dataState.ports))
       }, 100)
   
       return () =>{
