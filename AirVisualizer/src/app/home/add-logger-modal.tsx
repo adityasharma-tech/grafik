@@ -3,7 +3,7 @@ import { useDataState } from "../../lib/zustand/store";
 import { FormEventHandler, useCallback, useState } from "react";
 import AddDeviceModal from "./add-device-dialog";
 
-export default function AddGraphModal({
+export default function AddLoggerModal({
   isOpen,
   setIsOpen,
 }: {
@@ -14,19 +14,19 @@ export default function AddGraphModal({
 
   const [deviceAddDialog, setDeviceAddDialog] = useState(false);
   const [deviceId, setDeviceId] = useState<string>("");
-  const [plotterId, setPlotterId] = useState<string>("");
-
+  const [loggerId, setLoggerId] = useState<string>("");
+  // const [] = useState()
 
   const handleAddPlotter: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
       dataState.addPlotter({
         deviceId: +deviceId,
-        plotterId: +plotterId
+        plotterId: +loggerId
       })
       setIsOpen(false);
     },
-    [dataState.addPlotter, setIsOpen, deviceId, plotterId]
+    [dataState.addPlotter, setIsOpen, deviceId, loggerId]
   );
 
   return (
@@ -100,8 +100,8 @@ export default function AddGraphModal({
               <span className="min-w-38 my-auto">Plotter Id: </span>
               <input
               required
-              value={plotterId}
-              onChange={(e)=>setPlotterId(e.target.value)}
+              value={loggerId}
+              onChange={(e)=>setLoggerId(e.target.value)}
                 placeholder="Enter same plotter id as on the IoT device."
                 type="text"
                 className="primary-input"
@@ -111,7 +111,7 @@ export default function AddGraphModal({
           <div className="flex justify-end h-full items-end">
             <button
             type="submit"
-            disabled={plotterId.trim()=="" || !deviceId}
+            disabled={loggerId.trim()=="" || !deviceId}
               className="font-medium px-5 disabled:opacity-60 py-3 disabled:cursor-not-allowed bg-neutral-800 rounded-xl text-white hover:opacity-90 cursor-pointer"
             >
               Add plotter

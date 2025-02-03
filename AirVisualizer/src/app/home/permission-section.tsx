@@ -73,6 +73,13 @@ export default function PermissionSection() {
                       dataPoint: +data
                     })
                     break;
+                  case "log":
+                    dataState.addLoggingData({
+                      deviceId: +deviceId.trim(),
+                      loggerId: +dataId.trim(),
+                      message: data
+                    })
+                    break;
                 }
               }
               }

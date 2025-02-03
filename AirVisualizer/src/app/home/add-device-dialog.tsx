@@ -2,7 +2,6 @@ import ReactModal from "react-modal";
 import { useDataState } from "../../lib/zustand/store";
 import {
   FormEventHandler,
-  MouseEventHandler,
   useCallback,
   useEffect,
   useState,
@@ -19,7 +18,7 @@ export default function AddDeviceModal({
 
   const [selectedPort, setSelectedPort] = useState(0);
   const [deviceId, setDeviceId] = useState<string>("");
-  const [name, setName] = useState<string>(`${deviceId}`);
+  // const [name, setName] = useState<string>(`${deviceId}`);
   // const [] = useState()
 
   const ports = useDataState((state) => state.ports);

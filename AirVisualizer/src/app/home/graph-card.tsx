@@ -1,7 +1,7 @@
 import { cn } from "../../lib/utils";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
-import { PlotT, PlotterT, useDataState } from "../../lib/zustand/store";
+import {useEffect, useRef, useState } from "react";
+import { PlotterT } from "../../lib/zustand/store";
 
 export default function GraphCard({
   title = "Graph1",

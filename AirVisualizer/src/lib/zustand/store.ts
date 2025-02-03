@@ -46,11 +46,22 @@ interface DataState {
   setDeviceId: (data: { deviceId: number; portIndex: number }) => void;
   addPlotter: (data: { deviceId: number; plotterId: number }) => void;
   addLogger: (data: { deviceId: number; loggerId: number }) => void;
-  addPlottingData: (data: {
-    deviceId: number;
-    plotterId: number;
-    dataPoint: number;
-  }) => void;
+  addPlottingData: (
+    data: {
+      deviceId: number;
+      plotterId: number;
+      dataPoint: number;
+    },
+    MAX_POINTS?: number
+  ) => void;
+  addLoggingData: (
+    data: {
+      deviceId: number;
+      loggerId: number;
+      message: string;
+    },
+    MAX_POINTS?: number
+  ) => void;
 }
 
 const useAppState = create<AppState>()((set) => ({
@@ -99,7 +110,6 @@ const useDataState = create<DataState>()((set) => ({
       const ports = state.ports;
       return { ports: ports.filter((port) => port.port == data.port) };
     }),
-    
 
   toogleRunning: () => set((state) => ({ running: !state.running })),
 
@@ -107,7 +117,7 @@ const useDataState = create<DataState>()((set) => ({
     set((state) => {
       const ports = state.ports;
       ports[data.portIndex].deviceId = data.deviceId;
-      console.log("setDeviceId",ports, data)
+      console.log("setDeviceId", ports, data);
       return { ports };
     }),
 
@@ -153,39 +163,78 @@ const useDataState = create<DataState>()((set) => ({
       return { ports };
     }),
 
-  addPlottingData: (data) =>
-    set((state)=>{
-      const MAX_POINTS = 100;
-    const portIndex = state.ports.findIndex((val) => val.deviceId === data.deviceId);
-    
-    if (portIndex === -1) return state;
-    
-    const ports = [...state.ports];
-    const port = {...ports[portIndex]};
-    const plotters = [...(port.plotters || [])];
-    
-    const plotterIndex = plotters.findIndex(val => val.plotterId === data.plotterId);
-    if (plotterIndex === -1) return state;
-    
-    const plotter = {
-      ...plotters[plotterIndex],
-      plots: [
-        ...(plotters[plotterIndex].plots.length >= MAX_POINTS 
-          ? plotters[plotterIndex].plots.slice(1) 
-          : plotters[plotterIndex].plots),
-        {
-          dataPoint: data.dataPoint,
-          timestamp: new Date()
-        }
-      ]
-    };
-    
-    plotters[plotterIndex] = plotter;
-    port.plotters = plotters;
-    ports[portIndex] = port;
-    
-    return { ports };
-    })
+  addPlottingData: (data, MAX_POINTS = 100) =>
+    set((state) => {
+      const portIndex = state.ports.findIndex(
+        (val) => val.deviceId === data.deviceId
+      );
+
+      if (portIndex === -1) return state;
+
+      const ports = [...state.ports];
+      const port = { ...ports[portIndex] };
+      const plotters = [...(port.plotters || [])];
+
+      const plotterIndex = plotters.findIndex(
+        (val) => val.plotterId === data.plotterId
+      );
+      if (plotterIndex === -1) return state;
+
+      const plotter = {
+        ...plotters[plotterIndex],
+        plots: [
+          ...(plotters[plotterIndex].plots.length >= MAX_POINTS
+            ? plotters[plotterIndex].plots.slice(1)
+            : plotters[plotterIndex].plots),
+          {
+            dataPoint: data.dataPoint,
+            timestamp: new Date(),
+          },
+        ],
+      };
+
+      plotters[plotterIndex] = plotter;
+      port.plotters = plotters;
+      ports[portIndex] = port;
+
+      return { ports };
+    }),
+  addLoggingData: (data, MAX_POINTS = 100) =>
+    set((state) => {
+      const portIndex = state.ports.findIndex(
+        (val) => val.deviceId === data.deviceId
+      );
+
+      if (portIndex === -1) return state;
+
+      const ports = [...state.ports];
+      const port = { ...ports[portIndex] };
+      const loggers = [...(port.loggers || [])];
+
+      const loggerIndex = loggers.findIndex(
+        (val) => val.loggerId === data.loggerId
+      );
+      if (loggerIndex === -1) return state;
+
+      const logger = {
+        ...loggers[loggerIndex],
+        plots: [
+          ...(loggers[loggerIndex].logs.length >= MAX_POINTS
+            ? loggers[loggerIndex].logs.slice(1)
+            : loggers[loggerIndex].logs),
+          {
+            message: data.message,
+            timestamp: new Date(),
+          },
+        ],
+      };
+
+      loggers[loggerIndex] = logger;
+      port.loggers = loggers;
+      ports[portIndex] = port;
+
+      return { ports };
+    }),
 }));
 
 export { useDataState };
