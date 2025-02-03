@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDataState } from "../../lib/zustand/store";
 
 export default function PermissionSection() {
   const dataState = useDataState((state) => state);
 
-  const [isRunning, setIsRunning] = useState<boolean>(dataState.running);
+  const isRunning = useRef(false)
   // callbacks
   const handleListPorts = useCallback(async () => {
     if (window.navigator && "serial" in navigator) {
@@ -38,7 +38,6 @@ export default function PermissionSection() {
 
   const runPort = useCallback(
     async (port: any, index: number) => {
-      setIsRunning(true)
       if (!(window.navigator && "serial" in navigator)) return;
       try {
         try {
@@ -53,10 +52,11 @@ export default function PermissionSection() {
             reader.releaseLock();
             break;
           }
-          if(!isRunning){
-            console.log("Is this correct.")
+          if(isRunning.current == false){
+            console.log("Is this correct.", isRunning)
             await reader.releaseLock();
             console.log(port);
+            await port.close()
             break;
           }
           const decodedValue = new TextDecoder().decode(value);
@@ -115,6 +115,7 @@ export default function PermissionSection() {
   useEffect(() => {
     if (!dataState.running) return;
     (async () => {
+      isRunning.current = true;
       await Promise.all(
         dataState.ports.map((portData, index) => runPort(portData.port, index))
       );
@@ -122,7 +123,7 @@ export default function PermissionSection() {
   }, [dataState.running]);
 
   useEffect(()=>{
-    setIsRunning(dataState.running)
+    isRunning.current = dataState.running;
     console.log(dataState.running)
   }, [dataState.running])
 
