@@ -155,14 +155,36 @@ const useDataState = create<DataState>()((set) => ({
 
   addPlottingData: (data) =>
     set((state)=>{
-      // console.log("dadasdfas", JSON.stringify(data))
-      const ports = state.ports;
-      const plotters = ports.find((val)=>val.deviceId == data.deviceId)?.plotters
-      plotters?.find(val=>val.plotterId==data.plotterId)?.plots.push({
-        dataPoint: data.dataPoint,
-        timestamp: new Date()
-      })
-      return { ports }
+      const MAX_POINTS = 100;
+    const portIndex = state.ports.findIndex((val) => val.deviceId === data.deviceId);
+    
+    if (portIndex === -1) return state;
+    
+    const ports = [...state.ports];
+    const port = {...ports[portIndex]};
+    const plotters = [...(port.plotters || [])];
+    
+    const plotterIndex = plotters.findIndex(val => val.plotterId === data.plotterId);
+    if (plotterIndex === -1) return state;
+    
+    const plotter = {
+      ...plotters[plotterIndex],
+      plots: [
+        ...(plotters[plotterIndex].plots.length >= MAX_POINTS 
+          ? plotters[plotterIndex].plots.slice(1) 
+          : plotters[plotterIndex].plots),
+        {
+          dataPoint: data.dataPoint,
+          timestamp: new Date()
+        }
+      ]
+    };
+    
+    plotters[plotterIndex] = plotter;
+    port.plotters = plotters;
+    ports[portIndex] = port;
+    
+    return { ports };
     })
 }));
 

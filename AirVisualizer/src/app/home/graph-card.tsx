@@ -44,7 +44,7 @@ export default function GraphCard({
 
   useEffect(()=>{
     const interval = setInterval(()=>{
-      setUpdateTrigger(prev=>prev + 1)
+      setUpdateTrigger(prev=>Math.random()+prev)
     }, 1)
 
     return () =>{
