@@ -17,7 +17,7 @@ export default function GraphSection() {
             key={`${index}-${idx}`}
             plotter={plotter}
             disabled={false}
-            primaryColor="#000"
+            primaryColor={plotter.color ?? "#000"}
             title="Arduino UNO"
           />)
         ))

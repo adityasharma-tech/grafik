@@ -5,7 +5,7 @@ import { PlotterT } from "../../lib/zustand/store";
 
 export default function GraphCard({
   title = "Graph1",
-  primaryColor = "#262626",
+  primaryColor = "#000",
   disabled = true,
   plotter
 }: {

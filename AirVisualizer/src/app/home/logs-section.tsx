@@ -39,7 +39,7 @@ export default function LogsSection() {
                   key={`${dx}-${idx}-${jdx}`}
                   message={log.log}
                   port={logger.loggerId.toString()}
-                  primaryColor="#000"
+                  primaryColor={logger.color ?? "#000"}
                   timestamp={log.timestamp}
                 />
               ))

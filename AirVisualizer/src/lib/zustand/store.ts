@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getRandomColor } from "../utils";
 
 type InfoT = {
   count: number;
@@ -16,6 +17,7 @@ type LogT = {
 
 type LoggerT = {
   loggerId: number;
+  color?:string;
   logs: LogT[];
 };
 
@@ -26,6 +28,7 @@ export type PlotT = {
 
 export type PlotterT = {
   plotterId: number;
+  color?: string;
   plots: PlotT[];
 };
 
@@ -137,6 +140,7 @@ const useDataState = create<DataState>()((set) => ({
         plotters?.push({
           plots: [],
           plotterId: data.plotterId,
+          color: getRandomColor()
         });
       }
       console.log("after ports: ", ports);
@@ -157,6 +161,7 @@ const useDataState = create<DataState>()((set) => ({
         loggers?.push({
           logs: [],
           loggerId: data.loggerId,
+          color: getRandomColor()
         });
       }
       console.log("after ports: ", ports);
