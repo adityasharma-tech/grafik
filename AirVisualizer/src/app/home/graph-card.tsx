@@ -1,7 +1,7 @@
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { useEffect, useRef, useState } from "react";
-import { PlotterT } from "../lib/zustand/store";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import { PlotT, PlotterT, useDataState } from "../../lib/zustand/store";
 
 export default function GraphCard({
   title = "Graph1",
@@ -19,7 +19,9 @@ export default function GraphCard({
     width: 500,
     height: 300,
   });
-  // const [realData, setRealData] = useState<any[]>([]);
+
+  const [updateTrigger, setUpdateTrigger] = useState(0)
+
 
   useEffect(() => {
     if (graphContainerRef.current)
@@ -29,6 +31,8 @@ export default function GraphCard({
       });
   }, [graphContainerRef]);
 
+  // const [realData, setRealData] = useState<any[]>([])
+
   // const realDataAdder = useCallback((data: number)=>{
   //   setRealData(realData => {
   //     const newData = [...(realData.length > 10 ? realData.slice(1) : realData), {
@@ -37,6 +41,17 @@ export default function GraphCard({
   //     return newData;
   //   });
   // }, [setRealData])
+
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      setUpdateTrigger(prev=>prev + 1)
+    }, 1)
+
+    return () =>{
+      clearInterval(interval);
+    }
+  }, [plotter])
+
 
 
   return (
@@ -65,8 +80,10 @@ export default function GraphCard({
         </span>
       </div>
       <div ref={graphContainerRef} className="container pt-5">
-        {!disabled ? (
+      
           <LineChart
+          key={updateTrigger}
+          data={plotter.plots}
             margin={{
               bottom: 0,
               left: 0,
@@ -77,13 +94,12 @@ export default function GraphCard({
             height={graphWidHei.height}
           >
             <Line
-              data={plotter.plots}
               dot={false}
               activeDot
               connectNulls
               isAnimationActive={false}
               type="monotone"
-              dataKey="uv"
+              dataKey="dataPoint"
               stroke={primaryColor}
             />
             <CartesianGrid
@@ -94,7 +110,6 @@ export default function GraphCard({
             <XAxis fontSize={12} strokeWidth={0.5} />
             <YAxis fontSize={12} strokeWidth={0.5} />
           </LineChart>
-        ) : null}
       </div>
     </div>
   );

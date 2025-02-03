@@ -31,7 +31,7 @@ export default function AddGraphModal({
       })
       setIsOpen(false);
     },
-    [dataState, setIsOpen]
+    [dataState.addPlotter, setIsOpen, deviceId, plotterId]
   );
 
   return (

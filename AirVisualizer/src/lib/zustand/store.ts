@@ -19,7 +19,7 @@ type LoggerT = {
   logs: LogT[];
 };
 
-type PlotT = {
+export type PlotT = {
   dataPoint: number;
   timestamp: Date;
 };
@@ -46,6 +46,11 @@ interface DataState {
   setDeviceId: (data: { deviceId: number; portIndex: number }) => void;
   addPlotter: (data: { deviceId: number; plotterId: number }) => void;
   addLogger: (data: { deviceId: number; loggerId: number }) => void;
+  addPlottingData: (data: {
+    deviceId: number;
+    plotterId: number;
+    dataPoint: number;
+  }) => void;
 }
 
 const useAppState = create<AppState>()((set) => ({
@@ -101,9 +106,8 @@ const useDataState = create<DataState>()((set) => ({
   setDeviceId: (data) =>
     set((state) => {
       const ports = state.ports;
-
       ports[data.portIndex].deviceId = data.deviceId;
-      console.log("setDeviceId",ports)
+      console.log("setDeviceId",ports, data)
       return { ports };
     }),
 
@@ -148,6 +152,18 @@ const useDataState = create<DataState>()((set) => ({
       console.log("after ports: ", ports);
       return { ports };
     }),
+
+  addPlottingData: (data) =>
+    set((state)=>{
+      // console.log("dadasdfas", JSON.stringify(data))
+      const ports = state.ports;
+      const plotters = ports.find((val)=>val.deviceId == data.deviceId)?.plotters
+      plotters?.find(val=>val.plotterId==data.plotterId)?.plots.push({
+        dataPoint: data.dataPoint,
+        timestamp: new Date()
+      })
+      return { ports }
+    })
 }));
 
 export { useDataState };

@@ -31,14 +31,14 @@ export default function AddDeviceModal({
   const handleAddDevice: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
-      console.log(deviceId)
+      console.log("deviceID: ", deviceId)
       setDevice({
         deviceId: +deviceId,
         portIndex: selectedPort,
       });
       setIsOpen(false);
     },
-    [dataState, setIsOpen]
+    [dataState, setIsOpen, deviceId, selectedPort]
   );
 
   return (
@@ -103,7 +103,7 @@ export default function AddDeviceModal({
               <span className="min-w-38 my-auto">Device Id: </span>
               <input
                 value={deviceId}
-                onChange={(e) => setDeviceId(e.target.value)}
+                onChange={(e) => {setDeviceId(e.target.value);console.log(e.target.value)}}
                 placeholder="Enter same device id as on the IoT device."
                 type="text"
                 className="primary-input"

@@ -63,9 +63,18 @@ export default function PermissionSection() {
             const [meta, data] = msg.split("\t:")
             if(meta && data){
               const [deviceId, dataType, dataId] = meta.split(" ");
-              console.log(`deviceId: ${deviceId.replace("\n", "").trim()}, dataType: ${dataType}, dataId: ${dataId}`)
               if(deviceId && dataType && dataId && deviceId.trim() != "" && dataType.trim() != "" && dataId.trim() != "")
-              {}
+              {
+                switch(dataType){
+                  case "plot":
+                    dataState.addPlottingData({
+                      deviceId: +deviceId.trim(),
+                      plotterId: +dataId.trim(),
+                      dataPoint: +data
+                    })
+                    break;
+                }
+              }
               }
           }
         }
