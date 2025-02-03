@@ -20,28 +20,28 @@ export default function GraphCard({
     height: 300,
   });
 
-  const [updateTrigger, setUpdateTrigger] = useState(0)
-
-
+  
+  
   useEffect(() => {
     if (graphContainerRef.current)
       setGraphWidHei({
-        width: graphContainerRef.current.clientWidth,
-        height: Math.floor(graphContainerRef.current.clientHeight * 0.8),
-      });
+    width: graphContainerRef.current.clientWidth,
+    height: Math.floor(graphContainerRef.current.clientHeight * 0.8),
+  });
   }, [graphContainerRef]);
-
+  
   // const [realData, setRealData] = useState<any[]>([])
-
+  
   // const realDataAdder = useCallback((data: number)=>{
-  //   setRealData(realData => {
-  //     const newData = [...(realData.length > 10 ? realData.slice(1) : realData), {
-  //     uv: Math.floor(data),
-  //     }];
-  //     return newData;
-  //   });
-  // }, [setRealData])
-
+    //   setRealData(realData => {
+      //     const newData = [...(realData.length > 10 ? realData.slice(1) : realData), {
+        //     uv: Math.floor(data),
+        //     }];
+        //     return newData;
+        //   });
+        // }, [setRealData])
+        
+  const [updateTrigger, setUpdateTrigger] = useState(0)
   useEffect(()=>{
     const interval = setInterval(()=>{
       setUpdateTrigger(prev=>Math.random()+prev)

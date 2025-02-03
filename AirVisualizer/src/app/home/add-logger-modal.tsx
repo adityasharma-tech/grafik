@@ -17,23 +17,23 @@ export default function AddLoggerModal({
   const [loggerId, setLoggerId] = useState<string>("");
   // const [] = useState()
 
-  const handleAddPlotter: FormEventHandler<HTMLFormElement> = useCallback(
+  const handleAddLogger: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
-      dataState.addPlotter({
+      dataState.addLogger({
         deviceId: +deviceId,
-        plotterId: +loggerId
+        loggerId: +loggerId
       })
       setIsOpen(false);
     },
-    [dataState.addPlotter, setIsOpen, deviceId, loggerId]
+    [dataState.addLogger, setIsOpen, deviceId, loggerId]
   );
 
   return (
     <ReactModal
       ariaHideApp={false}
       isOpen={isOpen}
-      contentLabel="Add new graph"
+      contentLabel="Add new logger"
       style={{
         content: {
           width: 800,
@@ -47,7 +47,7 @@ export default function AddLoggerModal({
     >
       <div className="h-[98%]">
         <div className="flex justify-between w-full">
-          <span className="font-medium">Add new plotter</span>
+          <span className="font-medium">Add new logger</span>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="absolute top-3 right-3 cursor-pointer hover:bg-neutral-200 transition-colors rounded-lg"
@@ -66,7 +66,7 @@ export default function AddLoggerModal({
             </svg>
           </button>
         </div>
-        <form onSubmit={handleAddPlotter} className="py-5 flex flex-col justify-between h-full">
+        <form onSubmit={handleAddLogger} className="py-5 flex flex-col justify-between h-full">
           <div className="flex flex-col gap-y-4">
             <div className="flex">
               <span className="min-w-38 my-auto">Select Device: </span>
@@ -97,12 +97,12 @@ export default function AddLoggerModal({
               </button>
             </div>
             <div className="flex">
-              <span className="min-w-38 my-auto">Plotter Id: </span>
+              <span className="min-w-38 my-auto">Logger Id: </span>
               <input
               required
               value={loggerId}
               onChange={(e)=>setLoggerId(e.target.value)}
-                placeholder="Enter same plotter id as on the IoT device."
+                placeholder="Enter same logger id as on the IoT device."
                 type="text"
                 className="primary-input"
               />
@@ -114,7 +114,7 @@ export default function AddLoggerModal({
             disabled={loggerId.trim()=="" || !deviceId}
               className="font-medium px-5 disabled:opacity-60 py-3 disabled:cursor-not-allowed bg-neutral-800 rounded-xl text-white hover:opacity-90 cursor-pointer"
             >
-              Add plotter
+              Add logger
             </button>
           </div>
         </form>

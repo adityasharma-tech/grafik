@@ -1,32 +1,29 @@
-import { FormEventHandler } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import LogMessage from "../../components/log-message";
-import useAppState from "../../lib/zustand/store";
+import useAppState, { useDataState } from "../../lib/zustand/store";
 import PermissionSection from "./permission-section";
 
 export default function LogsSection() {
   const allInfo = useAppState((state) => state.infos);
-  // const addNewInfo = useAppState((state) => state.addInfo);
 
-  // const handleSerialCommunication = useCallback(async () => {
-  //   if (window.navigator && "serial" in navigator) {
-  //     console.log("I am called.");
-  //     addNewInfo("Requesting serial port...");
-  //     try {
-  //       // @ts-ignore
-  //       const port = await navigator.serial.requestPort({
-  //         filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
-  //       });
-  //       console.log(port);
-  //     } catch (error: any) {
-  //       console.error(`Error: ${error.message}`);
-  //       addNewInfo(`Error: ${error.message}`);
-  //     }
-  //   }
-  // }, [window, addNewInfo]);
+  const dataState = useDataState((state) => state);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
   };
+
+   const [updateTrigger, setUpdateTrigger] = useState(0)
+    useEffect(()=>{
+      const interval = setInterval(()=>{
+        setUpdateTrigger(prev=>Math.random()+prev)
+        console.log(JSON.stringify(dataState.ports))
+      }, 100)
+  
+      return () =>{
+        clearInterval(interval);
+      }
+    }, [dataState])
+  
 
   return (
     <section className="h-full md:w-[800px] w-full">
@@ -34,55 +31,20 @@ export default function LogsSection() {
         <div className="py-1 text-center text-sm bg-neutral-50 mx-1 my-1 text-neutral-800 rounded-lg">
           <span>messages</span>
         </div>
-        <div className="h-full mt-auto">
-          <LogMessage
-            primaryColor="#c70036"
-            message="Temperature sensor active"
-            port={"ADXL3xx accelerometer"}
-            timestamp={new Date()}
-          />
-          <LogMessage
-            primaryColor="#a65f00"
-            message="Humidity levels normal"
-            port={"PIR sensor"}
-            timestamp={new Date()}
-          />
-          <LogMessage
-            primaryColor="#104e64"
-            message="Air quality sensor calibrated"
-            port={"HC-SR04 ultrasonic sensor"}
-            timestamp={new Date()}
-          />
-          <LogMessage
-            primaryColor="#c70036"
-            message="Motion detected in living room"
-            port={"ADXL3xx accelerometer"}
-            timestamp={new Date()}
-          />
-          <LogMessage
-            primaryColor="#a65f00"
-            message="Ultrasonic sensor triggered"
-            port={"PIR sensor"}
-            timestamp={new Date()}
-          />
-          <LogMessage
-            primaryColor="#104e64"
-            message="Light sensor adjusted"
-            port={"HC-SR04 ultrasonic sensor"}
-            timestamp={new Date()}
-          />
-          <LogMessage
-            primaryColor="#c70036"
-            message="Temperature sensor active"
-            port={"ADXL3xx accelerometer"}
-            timestamp={new Date()}
-          />
-          <LogMessage
-            primaryColor="#a65f00"
-            message="Humidity levels normal"
-            port={"PIR sensor"}
-            timestamp={new Date()}
-          />
+        <div key={updateTrigger} className="h-full mt-auto max-h-[55vh] overflow-y-auto">
+          {dataState.ports.map((port, dx) =>
+            port.loggers.map((logger, idx) =>
+              logger.logs.map((log, jdx) => (
+                <LogMessage
+                  key={`${dx}-${idx}-${jdx}`}
+                  message={log.log}
+                  port={logger.loggerId.toString()}
+                  primaryColor="#000"
+                  timestamp={log.timestamp}
+                />
+              ))
+            )
+          )}
         </div>
         <form onSubmit={handleSubmit} className="p-1 flex gap-x-1">
           <select className="rounded-lg px-2 py-1 h-8 text-sm border max-w-22 truncate font-medium">
@@ -94,11 +56,12 @@ export default function LogsSection() {
           </select>
 
           <input
+          disabled
             type="text"
-            className="w-full rounded-lg px-2 py-1 h-8 text-sm focus:outline-none border focus:bg-zinc-50 transition-all"
+            className="w-full rounded-lg px-2 disabled:opacity-50 cursor-not-allowed py-1 h-8 text-sm focus:outline-none border focus:bg-zinc-50 transition-all"
             placeholder="Send message"
           />
-          <button className="rounded-lg bg-gray-100 px-1 border hover:bg-gray-200 transition-colors">
+          <button className="rounded-lg disabled:opacity-50 bg-gray-100 px-1 border hover:bg-gray-200 transition-colors">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width={25}

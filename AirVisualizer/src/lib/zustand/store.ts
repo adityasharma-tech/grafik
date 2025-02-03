@@ -199,42 +199,42 @@ const useDataState = create<DataState>()((set) => ({
 
       return { ports };
     }),
-  addLoggingData: (data, MAX_POINTS = 100) =>
-    set((state) => {
-      const portIndex = state.ports.findIndex(
-        (val) => val.deviceId === data.deviceId
-      );
-
-      if (portIndex === -1) return state;
-
-      const ports = [...state.ports];
-      const port = { ...ports[portIndex] };
-      const loggers = [...(port.loggers || [])];
-
-      const loggerIndex = loggers.findIndex(
-        (val) => val.loggerId === data.loggerId
-      );
-      if (loggerIndex === -1) return state;
-
-      const logger = {
-        ...loggers[loggerIndex],
-        plots: [
-          ...(loggers[loggerIndex].logs.length >= MAX_POINTS
-            ? loggers[loggerIndex].logs.slice(1)
-            : loggers[loggerIndex].logs),
-          {
-            message: data.message,
-            timestamp: new Date(),
-          },
-        ],
-      };
-
-      loggers[loggerIndex] = logger;
-      port.loggers = loggers;
-      ports[portIndex] = port;
-
-      return { ports };
-    }),
+    addLoggingData: (data, MAX_POINTS = 100) =>
+      set((state) => {
+        const portIndex = state.ports.findIndex(
+          (val) => val.deviceId === data.deviceId
+        );
+    
+        if (portIndex === -1) return state;
+    
+        const ports = [...state.ports];
+        const port = { ...ports[portIndex] };
+        const loggers = [...(port.loggers || [])];
+    
+        const loggerIndex = loggers.findIndex(
+          (val) => val.loggerId === data.loggerId
+        );
+        if (loggerIndex === -1) return state;
+    
+        const logger = {
+          ...loggers[loggerIndex],
+          logs: [
+            ...(loggers[loggerIndex].logs.length >= MAX_POINTS
+              ? loggers[loggerIndex].logs.slice(1)
+              : loggers[loggerIndex].logs),
+            {
+              log: data.message,
+              timestamp: new Date(),
+            },
+          ],
+        };
+    
+        loggers[loggerIndex] = logger;
+        port.loggers = loggers;
+        ports[portIndex] = port;
+    
+        return { ports };
+      }),    
 }));
 
 export { useDataState };
