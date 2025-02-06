@@ -262,3 +262,51 @@ export const demoGraphData = [
 export const demoApexGraphData = [
   { x: new Date().getTime(), y: Math.floor(Math.random() * 100) },
 ];
+
+export const demoPlotters = [
+  {
+    plotterId: 3,
+    title: "ADX33 Accelerometer Sensor",
+    color: "#000",
+    plotter: {}
+  },
+  {
+    plotterId: 3,
+    title: "Thermoresistor Sensor",
+    color: "#000",
+    plotter: {}
+  },
+]
+
+export const demoPerformanceData = [
+  {
+    title: "Data plotted",
+    desc: "All",
+    content: "1.2K"
+  },
+  {
+    title: "Logs Recieved",
+    desc: "All",
+    content: "1087"
+  },
+  {
+    title: "Error logs",
+    desc: "All",
+    content: "7"
+  },
+  {
+    title: "Latency",
+    desc: "Average",
+    content: "3.6ms"
+  },
+  {
+    title: "Plotters",
+    desc: "All",
+    content: "3"
+  },
+  {
+    title: "Loggers",
+    desc: "All",
+    content: "7"
+  }
+]
