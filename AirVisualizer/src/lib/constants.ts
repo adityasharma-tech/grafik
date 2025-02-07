@@ -1,3 +1,5 @@
+import { LogMessageT, WritterMessageT } from "./types";
+
 export const demoGraphData = [
   {
     name: "Page A",
@@ -309,4 +311,46 @@ export const demoPerformanceData = [
     desc: "All",
     content: "7"
   }
+]
+
+export const demoLogMessageData: LogMessageT[] = [
+  {
+    message: "Here is your error message",
+    timestamp: new Date(),
+    loggerId: 1365,
+    logType: "error"
+  },
+  {
+    message: "Here is your log message",
+    timestamp: new Date(),
+    loggerId: 1365,
+    logType: "log"
+  },
+  {
+    message: "Here is your log message",
+    timestamp: new Date(),
+    loggerId: 1365,
+    logType: "warn"
+  },
+]
+
+export const demoWritterData: WritterMessageT[] = [
+  {
+    message: "Simple message writting data.",
+    deviceId: 3,
+    deviceName: "Arduino UNO",
+    timestamp: new Date()
+  },
+  {
+    message: "Simple message writting data.",
+    deviceId: 0,
+    deviceName: "ESP32",
+    timestamp: new Date()
+  },
+  {
+    message: "Simple message writting data.",
+    deviceId: 1,
+    deviceName: "Espreff IO",
+    timestamp: new Date()
+  },
 ]

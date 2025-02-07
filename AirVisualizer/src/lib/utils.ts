@@ -25,3 +25,18 @@ export function getRandomColor() {
   const randomIndex = Math.floor(Math.random() * colors.length);
   return colors[randomIndex];
 }
+
+
+export function formatTime(date: Date | string | number): string {
+  const d = new Date(date);
+
+  if (isNaN(d.getTime())) {
+      throw new Error("Invalid date");
+  }
+
+  const hours = d.getHours();
+  const minutes = d.getMinutes().toString().padStart(2, '0');
+  const seconds = d.getSeconds().toString().padStart(2, '0');
+
+  return `${hours}:${minutes}:${seconds}`;
+}
