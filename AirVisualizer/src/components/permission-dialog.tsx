@@ -9,7 +9,7 @@ export default function PermissionDialog({
 }) {
   if (isSerialPermissionDialogOpen)
     return (
-      <section className="h-screen flex justify-center items-center w-screen absolute inset-0 bg-black/20 backdrop-blur-xs">
+      <section className="h-screen z-50 flex justify-center items-center w-screen absolute inset-0 bg-black/20 backdrop-blur-xs">
         <div className="min-w-xl rounded-2xl bg-neutral-100 inset-shadow-sm p-5">
           <div className="flex gap-x-3 items-center">
             <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">

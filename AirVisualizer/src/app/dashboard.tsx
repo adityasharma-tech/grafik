@@ -8,6 +8,9 @@ import { openDB } from "../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import PermissionDialog from "../components/permission-dialog";
 import useAppState from "../lib/store";
+import AssignPlotter from "./dashboard/dialogs/assign-plotter";
+import AssignLogger from "./dashboard/dialogs/assign-logger";
+import AttachDevice from "./dashboard/dialogs/assign-device";
 
 export default function Dashboard() {
   const [isSerialPermissionDialogOpen, setSerialPermissionDialogOpen] =
@@ -69,6 +72,9 @@ export default function Dashboard() {
         setSerialPermissionDialogOpen={setSerialPermissionDialogOpen}
         allowSerialPermissions={handleSerialPermissions}
       />
+      <AssignPlotter/>
+      <AssignLogger/>
+      <AttachDevice/>
     </div>
   );
 }

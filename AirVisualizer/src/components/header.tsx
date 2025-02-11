@@ -1,4 +1,8 @@
+import { useDialogHook } from "../hooks/dialog-hooks";
+
 export default function Header() {
+  const dialog = useDialogHook();
+
   return (
     <header className="h-16 pt-1 bg-gradient-to-b from-[#F6F6F6] to-white items-center flex justify-between px-10">
       <div className="flex gap-x-4">
@@ -19,12 +23,12 @@ export default function Header() {
       </div>
       <div className="flex gap-x-5 items-center">
         <div className="flex border rounded-xl bg-white font-medium border-[#D8D8D8] overflow-hidden">
-          <button className="hover:bg-neutral-100 bg-white px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none">New Plotter</button>
+          <button type="button" onClick={dialog?.tooglePlotterDialog} className="hover:bg-neutral-100 bg-white px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none">New Plotter</button>
           <div className="border-l border-[#D8D8D8]"/>
-          <button className="hover:bg-neutral-100 bg-white px-5 pr-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none">New Logger</button>
+          <button type="button" onClick={dialog?.toogleLoggerDialog} className="hover:bg-neutral-100 bg-white px-5 pr-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none">New Logger</button>
         </div>
         <div>
-          <button className="hover:bg-neutral-100 rounded-xl border border-[#D8D8D8] font-medium bg-white px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none">Attach Device</button>
+          <button type="button" onClick={dialog?.toogleAttachDeviceDialog} className="hover:bg-neutral-100 rounded-xl border border-[#D8D8D8] font-medium bg-white px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none">Attach Device</button>
         </div>
         <button className="hover:bg-gray-800 rounded-xl border border-[#141414] text-white font-medium bg-black px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none">Start Monitoring</button>
         <button className="hover:bg-neutral-200 cursor-pointer rounded-lg w-9 transition-colors flex justify-center items-center h-9">
