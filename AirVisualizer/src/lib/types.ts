@@ -1,9 +1,7 @@
 type LogMessageT = {
     message: string;
     timestamp: Date;
-    loggerId: number;
     logType: "error" | "log" | "warn";
-    color?: string;
 }
 
 type PerformanceDataT = {
@@ -12,8 +10,19 @@ type PerformanceDataT = {
     content: string;
 }
 
+type PlotT = {
+    dataPoint: number;
+    timestamp: Date;
+}
+
 type PlotterT = {
     plotterId: number;
+    title?: string;
+    color?: string;
+}
+
+type LoggerT = {
+    loggerId: number;
     title: string;
     color?: string;
 }
@@ -27,15 +36,21 @@ type WritterMessageT = {
 
 type DeviceT = {
     name?: string;
-    deviceId: number;
     color?: string;
+    deviceId: number;
     port: any;
 }
 
+type PortT = {
+    port: any;
+    portId: string;
+}
+
 export type {
-    LogMessageT,
     PerformanceDataT,
     PlotterT,
     WritterMessageT,
-    DeviceT
+    DeviceT,
+    LoggerT,
+    PortT
 }

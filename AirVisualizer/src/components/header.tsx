@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="h-16 bg-gradient-to-b from-[#F6F6F6] to-white items-center flex justify-between px-10">
+    <header className="h-16 pt-1 bg-gradient-to-b from-[#F6F6F6] to-white items-center flex justify-between px-10">
       <div className="flex gap-x-4">
         <div className="flex items-center">
           <img src="https://avatar.iran.liara.run/public" className="h-8 w-8" />

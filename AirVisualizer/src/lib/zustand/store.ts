@@ -71,7 +71,7 @@ const useAppState = create<AppState>()((set) => ({
   infos: [],
   addInfo: (info) =>
     set((state) => {
-      const newInfosState = state.infos;
+      const newInfosState = state.infos
 
       let countUpdate = false;
 
@@ -88,7 +88,7 @@ const useAppState = create<AppState>()((set) => ({
 
       newInfosState.push({
         count: 1,
-        message: info,
+        message: info
       });
       return { infos: newInfosState };
     }),
