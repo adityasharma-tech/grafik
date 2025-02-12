@@ -32,10 +32,10 @@ export default function PlotterCard(props: PlotterCardPropT) {
       if (!isRunning.current) return;
       if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
       if (isRestarting.current) {
-        setPlottingData((data) => [...data, null])
-        toogleRestarting()
+        setPlottingData((data) => [...data, null]);
+        toogleRestarting();
         isRestarting.current = false;
-      };
+      }
 
       if (indexDb.current.objectStoreNames.contains("plots")) {
         const data = await indexDb.current.getAllFromIndex(
@@ -56,6 +56,29 @@ export default function PlotterCard(props: PlotterCardPropT) {
     }
   }, [isRunning, indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData, props]);
 
+  const handleClearPlottingData = useCallback(async () => {
+    try {
+      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (indexDb.current.objectStoreNames.contains("plots")) {
+        await indexDb.current.clear("plots");
+        setPlottingData([]);
+      }
+    } catch (error: any) {
+      console.error(`Error during reading plotters data: ${error.message}`);
+    }
+  }, [indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData]);
+
+  const handleDeletePlotter = useCallback(async () => {
+    try {
+      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (indexDb.current.objectStoreNames.contains("plotters")) {
+        await indexDb.current.delete("plotters", props.plotterId);
+      }
+    } catch (error: any) {
+      console.error(`Error during reading plotters data: ${error.message}`);
+    }
+  }, [indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData, props]);
+
   useEffect(() => {
     const interval = setInterval(async () => await handleDataReading(), 100);
     return () => {
@@ -70,7 +93,11 @@ export default function PlotterCard(props: PlotterCardPropT) {
   return (
     <div
       ref={containerRef}
-      className={`border overflow-hidden border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3 ${maximized ? "bg-white z-10 inset-20 absolute" : "relative bg-neutral-50/20 h-64"}`}
+      className={`border overflow-hidden border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3 ${
+        maximized
+          ? "bg-white z-10 inset-20 absolute"
+          : "relative bg-neutral-50/20 h-64"
+      }`}
     >
       <div className="flex justify-between">
         <span className="text-sm font-medium">
@@ -79,6 +106,35 @@ export default function PlotterCard(props: PlotterCardPropT) {
             : props.plotterName?.trim()}
         </span>
         <div className="flex gap-x-0.5">
+          <button
+            type="button"
+            onClick={handleClearPlottingData}
+            className="rounded-md hover:bg-neutral-100 disabled:opacity-20 opacity-60 hover:opacity-100 px-1"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M4 12a8 8 0 0112.407-6.678L6.075 17.376A7.97 7.97 0 014 12zm3.593 6.678A8 8 0 0017.925 6.624L7.593 18.678zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
+                fill="#000"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={handleDeletePlotter}
+            className="rounded-md hover:bg-neutral-100 disabled:opacity-20 opacity-60 hover:opacity-100 px-1"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M10 12v5M14 12v5M4 7h16M6 10v8a3 3 0 003 3h6a3 3 0 003-3v-8M9 5a2 2 0 012-2h2a2 2 0 012 2v2H9V5z"
+                stroke="#000"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
           <button
             disabled={props.index <= 0}
             type="button"
@@ -120,7 +176,11 @@ export default function PlotterCard(props: PlotterCardPropT) {
               />
             </svg>
           </button>
-          <button type="button" onClick={()=>setMaximized(!maximized)} className="rounded-md h-6 w-6 ml-1.5 flex justify-center items-center hover:bg-neutral-100 opacity-60 hover:opacity-100">
+          <button
+            type="button"
+            onClick={() => setMaximized(!maximized)}
+            className="rounded-md h-6 w-6 ml-1.5 flex justify-center items-center hover:bg-neutral-100 opacity-60 hover:opacity-100"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={`w-4 h-4 ${maximized ? "rotate-180" : "rotate-0"}`}
