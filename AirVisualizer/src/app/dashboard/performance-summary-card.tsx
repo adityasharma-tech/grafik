@@ -62,7 +62,7 @@ export default function PerformanceSummaryCard() {
   }, []);
 
   return (
-    <section className="border border-[#D8D8D8] py-3 mb-3 bg-neutral-50 px-5 rounded-xl">
+    <section className="border border-[#D8D8D8] py-3 mb-3 bg-neutral-50/50 px-5 rounded-xl">
       <div>
         <span>Performance Summary</span>
       </div>

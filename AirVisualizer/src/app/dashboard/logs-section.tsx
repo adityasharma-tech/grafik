@@ -45,7 +45,7 @@ export default function LogsSection() {
   }, []);
 
   return (
-    <div className="border min-h-[55vh] flex flex-col max-h-[65vh] w-full bg-neutral-50 border-[#e2e2e2] rounded-xl px-3 py-2">
+    <div className="border min-h-[55vh] flex flex-col max-h-[65vh] w-full bg-neutral-50/20 border-[#e2e2e2] rounded-xl px-3 py-2">
       <div className="flex justify-between">
         <span className="text-sm font-medium">Log messages</span>
         <div className="flex gap-x-0.5">
@@ -92,7 +92,7 @@ export default function LogsSection() {
         </div>
       </div>
       <div ref={logContainer} className="flex flex-col flex-grow gap-y-2 py-1 overflow-y-scroll">
-        {data.map((log, idx) => (
+        {data.slice(-100).map((log, idx) => (
           <LogMessage key={idx} {...log} />
         ))}
       </div>
@@ -113,7 +113,7 @@ function LogMessage(props: LogMessageT) {
             ? "oklch(0.681 0.162 75.834)"
             : undefined,
       }}
-      className="flex justify-between bg-neutral-100 inset-shadow-sm rounded-md border-l-2 px-1.5 py-1"
+      className="flex justify-between bg-neutral-50 rounded-md border-l-2 px-1.5 py-1"
     >
       <span className="text-neutral-800">{props.message}</span>
       <div className="flex gap-x-2">

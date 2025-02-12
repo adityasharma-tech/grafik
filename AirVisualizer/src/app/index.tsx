@@ -1,5 +1,4 @@
 import Header from "../components/header";
-import { Toaster } from "../components/sonner";
 import GraphSection from "./home/graph-section";
 import LogsSection from "./home/logs-section";
 

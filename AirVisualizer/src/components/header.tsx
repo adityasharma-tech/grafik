@@ -170,8 +170,8 @@ export default function Header() {
         </div>
         <button
           onClick={state.toogleRunning}
-          aria-running={state.running ? "true" : "false"}
-          className="hover:bg-gray-800 min-w-44 aria-[running='true']:bg-rose-700 aria-[running='true']:border-rose-800 aria-[running='true']:animate-pulse rounded-xl border border-[#141414] text-white font-medium bg-black px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none"
+          data-running={state.running ? "true" : "false"}
+          className="hover:bg-gray-800 min-w-44 data-[running='true']:bg-rose-700 data-[running='true']:border-rose-800 data-[running='true']:animate-pulse rounded-xl border border-[#141414] text-white font-medium bg-black px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none"
         >
           {state.running ? `Running...` : `Start Monitoring`}
         </button>

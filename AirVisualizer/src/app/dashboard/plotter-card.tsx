@@ -2,10 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useAppState from "../../lib/store";
 import { IDBPDatabase, openDB } from "idb";
 import { DB_NAME, DB_VERSION } from "../../lib/db";
-import { PlotT } from "../../lib/types";
+import ReactEcharts from "./graph";
 
 interface PlotterCardPropT {
-  plotterId: number;
+  plotterId: string;
   plotterName?: string;
   color?: string;
   goUp: (idx: number) => void;
@@ -18,8 +18,9 @@ export default function PlotterCard(props: PlotterCardPropT) {
   const isRunning = useRef(false);
 
   const indexDb = useRef<IDBPDatabase<undefined> | null>(null);
+  const containerRef= useRef<HTMLDivElement|null>(null);
 
-  const [plottingData, setPlottingData] = useState<PlotT[]>([]);
+  const [plottingData, setPlottingData] = useState<any[]>([]);
 
   const handleDataReading = useCallback(async () => {
     try {
@@ -27,8 +28,10 @@ export default function PlotterCard(props: PlotterCardPropT) {
       if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
 
       if (indexDb.current.objectStoreNames.contains("plots")) {
-        const result = await indexDb.current.getAll("plots");
-        console.log("result is here: ", result);
+        const result = (await indexDb.current.getAllFromIndex("plots", "plotterId", props.plotterId.toString())).splice(-200).map(data=>({
+            name: new Date(+data.timestamp).getTime(),
+            value: [+data.timestamp, +data.dataPoint]
+        }))
         setPlottingData(result);
       }
     } catch (error: any) {
@@ -48,7 +51,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
   }, [running]);
 
   return (
-    <div className="border h-64 bg-neutral-50 border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3">
+    <div ref={containerRef} className="border h-64 bg-neutral-50/20 border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3">
       <div className="flex justify-between">
         <span className="text-sm font-medium">
           {props.plotterName?.trim() === ""
@@ -115,7 +118,58 @@ export default function PlotterCard(props: PlotterCardPropT) {
           </button>
         </div>
       </div>
-      <div>{JSON.stringify(plottingData)}</div>
+      <ReactEcharts
+      height={containerRef.current ? containerRef.current.clientHeight - 35 : undefined}
+        option={{
+          tooltip: {
+            trigger: 'axis',
+            formatter: function (params: any) {
+              params = params[0];
+              const date = new Date(params.data.name);
+              return (
+                date.getHours() +
+                ':' +
+                (date.getMinutes() + 1) +
+                ':' +
+                date.getSeconds() +
+                ' : ' +
+                params.value[1]
+              );
+            },
+            axisPointer: {
+              animation: false
+            }
+          },
+          grid: {
+            left : 40,
+            right: 0,
+            bottom: 25,
+            top: 0
+          },
+          xAxis: {
+            type: 'time',
+            splitLine: {
+              show: false
+            }
+          },
+          yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%'],
+            splitLine: {
+              show: false
+            }
+          },
+          series: [
+            {
+              name: 'Data',
+              type: 'line',
+              showSymbol: false,
+              data: plottingData
+            }
+          ]
+        }}
+        loading={false}
+      />
     </div>
   );
 }

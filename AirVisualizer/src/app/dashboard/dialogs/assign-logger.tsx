@@ -84,8 +84,8 @@ export default function AssignLogger() {
           <div className="flex flex-col gap-y-4">
             <div className="flex gap-x-3">
               <SelectInput
-                values={devices.map((d) => (
-                  <option value={d.deviceId}>{d.deviceId}</option>
+                values={devices.map((d, idx) => (
+                  <option key={idx} value={d.deviceId}>COM{d.deviceId}</option>
                 ))}
                 value={deviceId}
                 setValue={setDeviceId}
