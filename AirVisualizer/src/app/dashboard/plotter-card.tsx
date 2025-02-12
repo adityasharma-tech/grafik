@@ -28,7 +28,8 @@ export default function PlotterCard(props: PlotterCardPropT) {
       if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
 
       if (indexDb.current.objectStoreNames.contains("plots")) {
-        const result = (await indexDb.current.getAllFromIndex("plots", "plotterId", props.plotterId.toString())).splice(-200).map(data=>({
+        const data = await indexDb.current.getAllFromIndex("plots", "plotterId", props.plotterId.toString())
+        const result = data.splice(data.length > 400 ? -200 : 0).map(data=>({
             name: new Date(+data.timestamp).getTime(),
             value: [+data.timestamp, +data.dataPoint]
         }))
@@ -37,7 +38,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
     } catch (error: any) {
       console.error(`Error during reading plotters data: ${error.message}`);
     }
-  }, [isRunning, indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData]);
+  }, [isRunning, indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData, props]);
 
   useEffect(() => {
     const interval = setInterval(async () => await handleDataReading(), 100);
@@ -142,8 +143,8 @@ export default function PlotterCard(props: PlotterCardPropT) {
           },
           grid: {
             left : 40,
-            right: 0,
-            bottom: 25,
+            right: 40,
+            bottom: 30,
             top: 0
           },
           xAxis: {

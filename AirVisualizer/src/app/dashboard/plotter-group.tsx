@@ -33,9 +33,9 @@ export default function PlotterGroup() {
   },[indexDb, openDB, DB_NAME, DB_VERSION, setPlotters])
 
   useEffect(()=>{
-   const timeout = setTimeout(async ()=>await getAllPlotters(), 1000)
-   return () =>{ 
-    clearTimeout(timeout)
+   const interval = setInterval(async ()=>await getAllPlotters(), 500)
+   return () =>{
+    clearInterval(interval)
    }
   }, [])
 
