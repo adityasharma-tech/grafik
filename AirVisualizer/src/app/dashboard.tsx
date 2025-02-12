@@ -4,13 +4,12 @@ import LogsSection from "./dashboard/logs-section";
 import PerformanceSummaryCard from "./dashboard/performance-summary-card";
 import PlotterGroup from "./dashboard/plotter-group";
 import SerialWritter from "./dashboard/serial-writter";
-import { openDB } from "../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import PermissionDialog from "../components/permission-dialog";
 import useAppState from "../lib/store";
 import AssignPlotter from "./dashboard/dialogs/assign-plotter";
 import AssignLogger from "./dashboard/dialogs/assign-logger";
-import AttachDevice from "./dashboard/dialogs/assign-device";
+import AttachDevice from "./dashboard/dialogs/attach-device";
 
 export default function Dashboard() {
   const [isSerialPermissionDialogOpen, setSerialPermissionDialogOpen] =
@@ -31,7 +30,7 @@ export default function Dashboard() {
         );
       }
     }
-  }, [window, openDB, uuidv4]);
+  }, [window, uuidv4]);
 
   const handleSerialPermissions = useCallback(async () => {
     if (window.navigator && "serial" in window.navigator) {

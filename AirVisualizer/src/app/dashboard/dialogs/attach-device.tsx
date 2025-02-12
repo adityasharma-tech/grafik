@@ -2,23 +2,35 @@ import { FormEventHandler, useCallback, useState } from "react";
 import SelectInput from "../../../components/ui/select-input";
 import TextInput from "../../../components/ui/text-input";
 import { useDialogHook } from "../../../hooks/dialog-hooks";
+import useAppState from "../../../lib/store";
+import { openDB } from "idb";
 
 export default function AttachDevice() {
   const dialog = useDialogHook();
 
   const [deviceId, setDeviceID] = useState("");
   const [deviceName, setDeviceName] = useState("");
-
+  
+  const ports = useAppState(state=>state.ports)
+  
+  const [portId, setPortId] = useState(ports.length > 0 ? ports[0].portId : undefined)
+  
   const handleAttachDevice: FormEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
         e.preventDefault();
         try {
-            
+          if(ports.length<=0) throw new Error("Error: Please connect any IoT device to get started.")
+            const db = await openDB("GrafikDB", 1);
+            await db.add("devices", {
+              deviceId,
+              deviceName,
+              portId: portId ?? ports[0].portId
+            })
         } catch (error: any) {
             console.error(`An error occured during attaching new device: ${error.message}`)
         }
     },
-    []
+    [openDB, deviceId, deviceName, portId]
   );
 
   if (dialog?.attachDeviceDialogOpen)
@@ -43,7 +55,7 @@ export default function AttachDevice() {
           <form onSubmit={handleAttachDevice} className="pt-3 h-full">
             <div className="flex flex-col gap-y-4">
               <div className="flex gap-x-3">
-                <SelectInput label="Device ID" />
+                <SelectInput required value={portId} setValue={setPortId} values={ports.map((port, idx)=><option value={port.portId} key={idx}>COM {idx}</option>)} label="Port index" />
                 <TextInput
                   required
                   type="text"

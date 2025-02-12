@@ -31,8 +31,8 @@ export default function SerialWritter() {
         </div>
       </div>
       <div className="flex flex-col-reverse flex-grow gap-y-2 py-1">
-        {demoWritterData.map((log) => (
-          <WritterLogMessage {...log} />
+        {demoWritterData.map((log, idx) => (
+          <WritterLogMessage key={idx} {...log} />
         ))}
       </div>
       <form onSubmit={handleSubmit} className="flex mt-2 gap-x-1">

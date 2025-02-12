@@ -40,3 +40,18 @@ export function formatTime(date: Date | string | number): string {
 
   return `${hours}:${minutes}:${seconds}`;
 }
+
+export function moveElementUp<T>(arr: T[], index: number): T[] {
+  if (index > 0) {
+      [arr[index], arr[index - 1]] = [arr[index - 1], arr[index]];
+  }
+  return arr;
+}
+
+
+export function moveElementDown<T>(arr: T[], index: number): T[] {
+  if (index < arr.length - 1) {
+      [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+  }
+  return arr;
+}

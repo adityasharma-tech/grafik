@@ -1,4 +1,4 @@
-import { LogMessageT, WritterMessageT } from "./types";
+import { WritterMessageT } from "./types";
 
 export const demoGraphData = [
   {
@@ -278,6 +278,18 @@ export const demoPlotters = [
     color: "#000",
     plotter: {}
   },
+  {
+    plotterId: 3,
+    title: "New Sensor",
+    color: "#000",
+    plotter: {}
+  },
+  {
+    plotterId: 3,
+    title: "Weather Sensor",
+    color: "#000",
+    plotter: {}
+  },
 ]
 
 export const demoPerformanceData = [
@@ -313,7 +325,7 @@ export const demoPerformanceData = [
   }
 ]
 
-export const demoLogMessageData: LogMessageT[] = [
+export const demoLogMessageData = [
   {
     message: "Here is your error message",
     timestamp: new Date(),

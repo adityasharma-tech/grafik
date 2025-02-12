@@ -3,6 +3,9 @@ interface PlotterCardPropT {
   title?: string;
   color?: string;
   plotter: any;
+  goUp: (idx: number)=>void;
+  goDown: (idx: number)=>void;
+  index: number
 }
 
 export default function PlotterCard(props: PlotterCardPropT) {
@@ -11,7 +14,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
       <div className="flex justify-between">
         <span className="text-sm font-medium">{props.title}</span>
         <div className="flex gap-x-0.5">
-          <button className="rounded-md hover:bg-neutral-100 opacity-60 hover:opacity-100">
+          <button disabled={props.index<=0} type="button" onClick={()=>props.goUp(props.index)} className="rounded-md hover:bg-neutral-100 disabled:opacity-20 opacity-60 hover:opacity-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-6 h-6"
@@ -27,7 +30,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
               />
             </svg>
           </button>
-          <button className="rounded-md hover:bg-neutral-100 opacity-60 hover:opacity-100">
+          <button type="button" onClick={()=>props.goDown(props.index)} className="rounded-md hover:bg-neutral-100 disabled:opacity-20 opacity-60 hover:opacity-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-6 h-6 rotate-180"

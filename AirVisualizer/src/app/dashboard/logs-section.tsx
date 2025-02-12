@@ -1,5 +1,4 @@
 import { demoLogMessageData } from "../../lib/constants";
-import { LogMessageT } from "../../lib/types";
 import { formatTime } from "../../lib/utils";
 
 export default function LogsSection() {
@@ -41,15 +40,15 @@ export default function LogsSection() {
         </div>
       </div>
       <div className="flex flex-col-reverse flex-grow gap-y-2 py-1">
-        {demoLogMessageData.map((log) => (
-          <LogMessage {...log} />
+        {demoLogMessageData.map((log, idx) => (
+          <LogMessage key={idx} {...log} />
         ))}
       </div>
     </div>
   );
 }
 
-function LogMessage(props: LogMessageT) {
+function LogMessage(props: any) {
   return <div style={{
     borderLeftColor: props.logType == "log" ? "oklch(0.627 0.194 149.214)" : props.logType == "error" ? "oklch(0.577 0.245 27.325)" : props.logType == "warn" ? "oklch(0.681 0.162 75.834)" : undefined
   }} className="flex justify-between bg-neutral-100 inset-shadow-sm rounded-md border-l-2 px-1.5 py-1">
