@@ -11,7 +11,6 @@ export default function Home() {
         <GraphSection/>
         <LogsSection/>
       </main>
-      <Toaster/>
     </div>
   );
 }

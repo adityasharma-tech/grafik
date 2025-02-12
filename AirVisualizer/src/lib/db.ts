@@ -1,11 +1,11 @@
-const DB_NAME = "GrafikDB";
-const DB_VERSION = 1;
+export const DB_NAME = "GrafikDB";
+export const DB_VERSION = 2;
 
-import {openDB} from 'idb';
-
-async function createIndexesInStores () {
-  return await openDB(DB_NAME, DB_VERSION, {
-    upgrade (db) {
+const createIndexesInStores = () => {
+  return new Promise<IDBDatabase>((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = () => {
+      const db = request.result;
       if (!db.objectStoreNames.contains("loggers"))
         db.createObjectStore("loggers", { keyPath: "loggerId" });
       if (!db.objectStoreNames.contains("plotters"))
@@ -16,10 +16,10 @@ async function createIndexesInStores () {
         db.createObjectStore("logs", { keyPath: "logId", autoIncrement: true });
       if (!db.objectStoreNames.contains("devices"))
         db.createObjectStore("devices", { keyPath: "deviceId" });
-    }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
   });
-}
+};
 
-export {
-   createIndexesInStores
-}
+export { createIndexesInStores };

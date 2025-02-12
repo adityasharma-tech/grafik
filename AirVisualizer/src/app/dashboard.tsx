@@ -11,10 +11,13 @@ import useAppState from "../lib/store";
 import AssignPlotter from "./dashboard/dialogs/assign-plotter";
 import AssignLogger from "./dashboard/dialogs/assign-logger";
 import AttachDevice from "./dashboard/dialogs/attach-device";
+import { Toaster } from "../components/sonner";
+import { useDialogHook } from "../hooks/dialog-hooks";
 
 export default function Dashboard() {
   const [isSerialPermissionDialogOpen, setSerialPermissionDialogOpen] =
     useState<boolean>(true);
+    const dialog = useDialogHook()
 
   const setPorts = useAppState((state)=>state.setPorts);
 
@@ -30,8 +33,7 @@ export default function Dashboard() {
           `(handleListPorts) Error occured during a database operation: ${error.message}`
         );
       } finally {
-        const db = await createIndexesInStores()
-        console.log(db)
+        await createIndexesInStores();
       }
     }
   }, [window, uuidv4, createIndexesInStores]);
@@ -76,8 +78,9 @@ export default function Dashboard() {
         allowSerialPermissions={handleSerialPermissions}
       />
       <AssignPlotter/>
-      <AssignLogger/>
+      {dialog?.loggerDialogOpen ? <AssignLogger/> : null}
       <AttachDevice/>
+      <Toaster/>
     </div>
   );
 }

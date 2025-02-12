@@ -5,42 +5,50 @@ import { useDialogHook } from "../../../hooks/dialog-hooks";
 import useAppState from "../../../lib/store";
 import { openDB } from "idb";
 import { toast } from "sonner";
-
+import { DB_NAME, DB_VERSION } from "../../../lib/db";
 
 export default function AttachDevice() {
   const dialog = useDialogHook();
 
   const [deviceId, setDeviceID] = useState("");
   const [deviceName, setDeviceName] = useState("");
-  
-  const ports = useAppState(state=>state.ports)
-  
-  const [portId, setPortId] = useState(ports.length > 0 ? ports[0].portId : undefined)
-  
+
+  const ports = useAppState((state) => state.ports);
+
+  const [portId, setPortId] = useState(
+    ports.length > 0 ? ports[0].portId : undefined
+  );
   const handleAttachDevice: FormEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
-        e.preventDefault();
-        try {
-          if(ports.length<=0) throw new Error("Error: Please connect any IoT device to get started.")
-            const db = await openDB("GrafikDB", 1);
-            await db.add("devices", {
-              deviceId,
-              deviceName,
-              portId: portId ?? ports[0].portId
-            })
-        } catch (error: any) {
-           console.error(`An error occured during attaching new device: ${error.message}`)
-        } finally {
-          toast("Device attached successfully.")
-        }
+      e.preventDefault();
+      try {
+        if (ports.length <= 0)
+          throw new Error(
+            "Error: Please connect any IoT device to get started."
+          );
+        const db = await openDB(DB_NAME, DB_VERSION);
+        await db.add("devices", {
+          deviceId,
+          deviceName,
+          portId: portId ?? ports[0].portId,
+        });
+        toast(`DeviceID ${deviceId} attached successfully.`)
+      } catch (error: any) {
+        console.error(
+          `An error occured during attaching new device: ${error.message}`
+        );
+        toast(`Error: ${error.message}`)
+      } finally {
+        dialog?.toogleAttachDeviceDialog();
+      }
     },
-    [openDB, deviceId, deviceName, portId]
+    [openDB, deviceId, deviceName, portId, toast]
   );
 
   if (dialog?.attachDeviceDialogOpen)
     return (
       <section className="h-screen flex justify-center items-center w-screen absolute inset-0 bg-black/20 backdrop-blur-xs">
-        <div className="min-w-xl rounded-2xl bg-neutral-100 inset-shadow-sm p-3">
+        <div className="min-w-lg rounded-2xl bg-neutral-100 inset-shadow-sm p-3">
           <div className="flex gap-x-3 items-center justify-between">
             <span className="font-medium text-lg">Configure new device</span>
             <button
@@ -59,7 +67,17 @@ export default function AttachDevice() {
           <form onSubmit={handleAttachDevice} className="pt-3 h-full">
             <div className="flex flex-col gap-y-4">
               <div className="flex gap-x-3">
-                <SelectInput required value={portId} setValue={setPortId} values={ports.map((port, idx)=><option value={port.portId} key={idx}>COM {idx}</option>)} label="Port index" />
+                <SelectInput
+                  required
+                  value={portId}
+                  setValue={setPortId}
+                  values={ports.map((port, idx) => (
+                    <option value={port.portId} key={idx}>
+                      COM {idx}
+                    </option>
+                  ))}
+                  label="Port index"
+                />
                 <TextInput
                   required
                   type="text"
@@ -79,6 +97,12 @@ export default function AttachDevice() {
                 />
               </div>
             </div>
+            {ports.length <= 0 ? (
+              <div className="max-w-lg text-justify text-xs px-2 py-2 mt-2 rounded-lg bg-amber-200 text-amber-800 font-medium">
+                If you don't see any ports open here. Please refresh and allow
+                to read/write your serial ports.
+              </div>
+            ) : null}
             <div className="flex gap-x-3 justify-end mt-10">
               <button
                 type="button"
@@ -87,7 +111,10 @@ export default function AttachDevice() {
               >
                 Cancel
               </button>
-              <button className="bg-neutral-800 px-6 py-2 py text-white rounded-xl hover:cursor-pointer hover:bg-black hover:inset-shadow text-sm font-medium">
+              <button
+                disabled={ports.length <= 0}
+                className="bg-neutral-800 disabled:opacity-75 disabled:hover:bg-neutral-800 disabled:hover:cursor-not-allowed px-6 py-2 py text-white rounded-xl hover:cursor-pointer hover:bg-black hover:inset-shadow text-sm font-medium"
+              >
                 Attach device
               </button>
             </div>
