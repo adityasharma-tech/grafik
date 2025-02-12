@@ -15,24 +15,40 @@ interface PlotterCardPropT {
 
 export default function PlotterCard(props: PlotterCardPropT) {
   const running = useAppState((state) => state.running);
+  const restarting = useAppState((state) => state.restarting);
+  const toogleRestarting = useAppState((state) => state.toogleRestarting);
   const isRunning = useRef(false);
+  const isRestarting = useRef(true);
 
   const indexDb = useRef<IDBPDatabase<undefined> | null>(null);
-  const containerRef= useRef<HTMLDivElement|null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [plottingData, setPlottingData] = useState<any[]>([]);
+
+  const [maximized, setMaximized] = useState<boolean>(false);
 
   const handleDataReading = useCallback(async () => {
     try {
       if (!isRunning.current) return;
       if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (isRestarting.current) {
+        setPlottingData((data) => [...data, null])
+        toogleRestarting()
+        isRestarting.current = false;
+      };
 
       if (indexDb.current.objectStoreNames.contains("plots")) {
-        const data = await indexDb.current.getAllFromIndex("plots", "plotterId", props.plotterId.toString())
-        const result = data.splice(data.length > 400 ? -200 : 0).map(data=>({
+        const data = await indexDb.current.getAllFromIndex(
+          "plots",
+          "plotterId",
+          props.plotterId.toString()
+        );
+        const result = data
+          .splice(data.length > 400 ? -200 : 0)
+          .map((data) => ({
             name: new Date(+data.timestamp).getTime(),
-            value: [+data.timestamp, +data.dataPoint]
-        }))
+            value: [+data.timestamp, +data.dataPoint],
+          }));
         setPlottingData(result);
       }
     } catch (error: any) {
@@ -49,10 +65,13 @@ export default function PlotterCard(props: PlotterCardPropT) {
 
   useEffect(() => {
     isRunning.current = running;
-  }, [running]);
-
+    isRestarting.current = restarting;
+  }, [running, restarting]);
   return (
-    <div ref={containerRef} className="border h-64 bg-neutral-50/20 border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3">
+    <div
+      ref={containerRef}
+      className={`border overflow-hidden border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3 ${maximized ? "bg-white z-10 inset-20 absolute" : "relative bg-neutral-50/20 h-64"}`}
+    >
       <div className="flex justify-between">
         <span className="text-sm font-medium">
           {props.plotterName?.trim() === ""
@@ -101,10 +120,10 @@ export default function PlotterCard(props: PlotterCardPropT) {
               />
             </svg>
           </button>
-          <button className="rounded-md h-6 w-6 ml-1.5 flex justify-center items-center hover:bg-neutral-100 opacity-60 hover:opacity-100">
+          <button type="button" onClick={()=>setMaximized(!maximized)} className="rounded-md h-6 w-6 ml-1.5 flex justify-center items-center hover:bg-neutral-100 opacity-60 hover:opacity-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-4 h-4 "
+              className={`w-4 h-4 ${maximized ? "rotate-180" : "rotate-0"}`}
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -120,54 +139,59 @@ export default function PlotterCard(props: PlotterCardPropT) {
         </div>
       </div>
       <ReactEcharts
-      height={containerRef.current ? containerRef.current.clientHeight - 35 : undefined}
+        height={
+          containerRef.current
+            ? containerRef.current.clientHeight - 35
+            : undefined
+        }
         option={{
           tooltip: {
-            trigger: 'axis',
+            trigger: "axis",
             formatter: function (params: any) {
               params = params[0];
               const date = new Date(params.data.name);
               return (
                 date.getHours() +
-                ':' +
+                ":" +
                 (date.getMinutes() + 1) +
-                ':' +
+                ":" +
                 date.getSeconds() +
-                ' : ' +
+                " : " +
                 params.value[1]
               );
             },
             axisPointer: {
-              animation: false
-            }
+              animation: false,
+            },
           },
           grid: {
-            left : 40,
+            left: 40,
             right: 40,
             bottom: 30,
-            top: 0
+            top: 0,
           },
           xAxis: {
-            type: 'time',
+            type: "time",
             splitLine: {
-              show: false
-            }
+              show: false,
+            },
           },
           yAxis: {
-            type: 'value',
-            boundaryGap: [0, '100%'],
+            type: "value",
+            boundaryGap: [0, "100%"],
             splitLine: {
-              show: false
-            }
+              show: false,
+            },
           },
           series: [
             {
-              name: 'Data',
-              type: 'line',
+              name: "Data",
+              type: "line",
               showSymbol: false,
-              data: plottingData
-            }
-          ]
+              data: plottingData,
+              connectNulls: false,
+            },
+          ],
         }}
         loading={false}
       />

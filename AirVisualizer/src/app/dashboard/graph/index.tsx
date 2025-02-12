@@ -9,7 +9,7 @@ export interface ReactEChartsProps {
   settings?: SetOptionOpts;
   loading?: boolean;
   theme?: "light" | "dark";
-  height?: number
+  height?: number | string
 }
 
 export default function ReactECharts({
