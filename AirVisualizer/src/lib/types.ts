@@ -1,4 +1,5 @@
 type LogMessageT = {
+    loggerId: string;
     message: string;
     timestamp: Date;
     logType: "error" | "log" | "warn";
@@ -23,6 +24,7 @@ type PlotterT = {
 
 type LoggerT = {
     loggerId: number;
+    deviceId: number;
     title: string;
     color?: string;
 }
@@ -52,5 +54,6 @@ export type {
     WritterMessageT,
     DeviceT,
     LoggerT,
-    PortT
+    PortT,
+    LogMessageT
 }

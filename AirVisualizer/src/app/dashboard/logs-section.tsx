@@ -1,7 +1,31 @@
-import { demoLogMessageData } from "../../lib/constants";
+import { useCallback, useEffect, useState } from "react";
 import { formatTime } from "../../lib/utils";
+import { openDB } from "idb";
+import { DB_NAME, DB_VERSION } from "../../lib/db";
+import { LogMessageT } from "../../lib/types";
 
 export default function LogsSection() {
+
+  const [data, setData] = useState<LogMessageT[]>([]) 
+
+  const handleDataReading = useCallback(async ()=>{
+    try {
+      const db = await openDB(DB_NAME, DB_VERSION)
+      setData(await db.getAll("logs"))
+    } catch (error: any) {
+      console.error(
+        `An error occured during assigning plotter: ${error.message}`
+      );
+    }
+  }, [openDB, DB_NAME, DB_VERSION, setData])
+
+  useEffect(()=>{
+    const timeout = setInterval(async ()=> await handleDataReading(), 100)
+    return () => {
+      clearInterval(timeout)
+    }
+  }, [])
+  
   return (
     <div className="border min-h-[55vh] flex flex-col max-h-[65vh] w-full bg-neutral-50 border-[#e2e2e2] rounded-xl px-3 py-2">
       <div className="flex justify-between">
@@ -40,7 +64,7 @@ export default function LogsSection() {
         </div>
       </div>
       <div className="flex flex-col-reverse flex-grow gap-y-2 py-1">
-        {demoLogMessageData.map((log, idx) => (
+        {data.map((log, idx) => (
           <LogMessage key={idx} {...log} />
         ))}
       </div>
@@ -48,7 +72,7 @@ export default function LogsSection() {
   );
 }
 
-function LogMessage(props: any) {
+function LogMessage(props: LogMessageT) {
   return <div style={{
     borderLeftColor: props.logType == "log" ? "oklch(0.627 0.194 149.214)" : props.logType == "error" ? "oklch(0.577 0.245 27.325)" : props.logType == "warn" ? "oklch(0.681 0.162 75.834)" : undefined
   }} className="flex justify-between bg-neutral-100 inset-shadow-sm rounded-md border-l-2 px-1.5 py-1">
@@ -57,9 +81,7 @@ function LogMessage(props: any) {
       <span className="text-neutral-500 text-sm self-center">
         {formatTime(props.timestamp)}
       </span>
-      <span style={{
-        color: props.color ?? "#000"
-      }}>
+      <span>
         [{props.loggerId}]
       </span>
     </div>

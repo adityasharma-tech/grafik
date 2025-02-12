@@ -20,7 +20,7 @@ export default function AssignPlotter() {
       e.preventDefault();
       try {
         const db = await openDB(DB_NAME, DB_VERSION);
-        await db.add("loggers", {
+        await db.add("plotters", {
           plotterId,
           plotterName,
           deviceId,

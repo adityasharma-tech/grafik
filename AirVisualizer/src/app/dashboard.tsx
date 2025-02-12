@@ -17,17 +17,19 @@ import { useDialogHook } from "../hooks/dialog-hooks";
 export default function Dashboard() {
   const [isSerialPermissionDialogOpen, setSerialPermissionDialogOpen] =
     useState<boolean>(true);
-    const dialog = useDialogHook()
+  const dialog = useDialogHook();
 
-  const setPorts = useAppState((state)=>state.setPorts);
+  const setPorts = useAppState((state) => state.setPorts);
 
   const handleListPorts = useCallback(async () => {
     if (window.navigator && "serial" in navigator) {
       try {
         // @ts-ignore
         const ps = await navigator.serial.getPorts();
-        if(!ps) throw new Error("Failed to get serial ports.")
-        setPorts(ps.map((value: any)=>({ port: value, portId: uuidv4().toString() })))
+        if (!ps) throw new Error("Failed to get serial ports.");
+        setPorts(
+          ps.map((value: any) => ({ port: value, portId: uuidv4().toString() }))
+        );
       } catch (error: any) {
         console.error(
           `(handleListPorts) Error occured during a database operation: ${error.message}`
@@ -49,7 +51,7 @@ export default function Dashboard() {
         console.error(`Error occured: ${error.message}`);
       } finally {
         await handleListPorts();
-        setSerialPermissionDialogOpen(false)
+        setSerialPermissionDialogOpen(false);
       }
     }
   }, [window, handleListPorts]);
@@ -77,10 +79,10 @@ export default function Dashboard() {
         setSerialPermissionDialogOpen={setSerialPermissionDialogOpen}
         allowSerialPermissions={handleSerialPermissions}
       />
-      <AssignPlotter/>
-      {dialog?.loggerDialogOpen ? <AssignLogger/> : null}
-      <AttachDevice/>
-      <Toaster/>
+      {dialog?.plotterDialogOpen ? <AssignPlotter /> : null}
+      {dialog?.loggerDialogOpen ? <AssignLogger /> : null}
+      {dialog?.attachDeviceDialogOpen ? <AttachDevice /> : null}
+      <Toaster />
     </div>
   );
 }
