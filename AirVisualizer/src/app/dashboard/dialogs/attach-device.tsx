@@ -4,6 +4,8 @@ import TextInput from "../../../components/ui/text-input";
 import { useDialogHook } from "../../../hooks/dialog-hooks";
 import useAppState from "../../../lib/store";
 import { openDB } from "idb";
+import { toast } from "sonner";
+
 
 export default function AttachDevice() {
   const dialog = useDialogHook();
@@ -27,7 +29,9 @@ export default function AttachDevice() {
               portId: portId ?? ports[0].portId
             })
         } catch (error: any) {
-            console.error(`An error occured during attaching new device: ${error.message}`)
+           console.error(`An error occured during attaching new device: ${error.message}`)
+        } finally {
+          toast("Device attached successfully.")
         }
     },
     [openDB, deviceId, deviceName, portId]

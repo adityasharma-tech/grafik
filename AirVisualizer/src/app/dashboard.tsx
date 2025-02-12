@@ -1,3 +1,4 @@
+import { createIndexesInStores } from "../lib/db";
 import { useCallback, useEffect, useState } from "react";
 import Header from "../components/header";
 import LogsSection from "./dashboard/logs-section";
@@ -28,9 +29,12 @@ export default function Dashboard() {
         console.error(
           `(handleListPorts) Error occured during a database operation: ${error.message}`
         );
+      } finally {
+        const db = await createIndexesInStores()
+        console.log(db)
       }
     }
-  }, [window, uuidv4]);
+  }, [window, uuidv4, createIndexesInStores]);
 
   const handleSerialPermissions = useCallback(async () => {
     if (window.navigator && "serial" in window.navigator) {

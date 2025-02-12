@@ -4,7 +4,7 @@ const DB_VERSION = 1;
 import {openDB} from 'idb';
 
 async function createIndexesInStores () {
-  await openDB(DB_NAME, DB_VERSION, {
+  return await openDB(DB_NAME, DB_VERSION, {
     upgrade (db) {
       if (!db.objectStoreNames.contains("loggers"))
         db.createObjectStore("loggers", { keyPath: "loggerId" });
@@ -20,4 +20,6 @@ async function createIndexesInStores () {
   });
 }
 
-createIndexesInStores();
+export {
+   createIndexesInStores
+}
