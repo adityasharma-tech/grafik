@@ -4,6 +4,14 @@ import useAppState from "../lib/store";
 import { IDBPDatabase, openDB } from "idb";
 import { DB_NAME, DB_VERSION } from "../lib/db";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown";
+import { toast } from "sonner";
+
 export default function Header() {
   const dialog = useDialogHook();
   const state = useAppState();
@@ -29,7 +37,7 @@ export default function Header() {
   );
 
   const addPlotData = useCallback(
-    async (deviceId: number, plotterId: number, dataPoint: number) => {
+    async (_: number, plotterId: number, dataPoint: number) => {
       try {
         if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
         await db.current.add("plots", {
@@ -109,6 +117,39 @@ export default function Header() {
     [window, navigator, state.running, TextDecoder, isRunning]
   );
 
+  const handleExportData = useCallback(async () => {
+    try {
+      if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+      const plotterData = await db.current.getAll("plots");
+      const loggerData = await db.current.getAll("logs");
+      function exportData (data: any, filename: string){
+       // Extract headers dynamically from the first object keys
+      const headers = Object.keys(data[0]).join(",");
+
+      // Convert object values into CSV rows
+      const rows = data.map((row: any) => Object.values(row).join(","));
+
+      // Combine headers and rows
+      const csvContent =
+        "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
+
+      // Encode CSV and trigger download
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); 
+      }
+      exportData(plotterData, `${new Date()}-plotters.csv`)
+      exportData(loggerData, `${new Date()}-loggers.csv`)
+    } catch (error: any) {
+      console.error(`Error occured during exporting data: ${error.message}`);
+      toast("Some error occured during exporting your data.");
+    }
+  }, [toast, db, openDB, DB_NAME, DB_VERSION, encodeURI]);
+
   useEffect(() => {
     if (!state.running) return;
     (async () => {
@@ -175,16 +216,26 @@ export default function Header() {
         >
           {state.running ? `Running...` : `Start Monitoring`}
         </button>
-        <button className="hover:bg-neutral-200 cursor-pointer rounded-lg w-9 transition-colors flex justify-center items-center h-9">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlSpace="preserve"
-            className="h-5 w-5 my-auto"
-            viewBox="0 0 32 32"
-          >
-            <path d="M16 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM6 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM26 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3z" />
-          </svg>
-        </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <button className="hover:bg-neutral-200 cursor-pointer rounded-lg w-9 transition-colors flex justify-center items-center h-9">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlSpace="preserve"
+                className="h-5 w-5 my-auto"
+                viewBox="0 0 32 32"
+              >
+                <path d="M16 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM6 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM26 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3z" />
+              </svg>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleExportData}>
+              Export
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

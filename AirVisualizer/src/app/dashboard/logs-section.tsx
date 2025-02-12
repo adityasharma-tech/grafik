@@ -24,10 +24,12 @@ export default function LogsSection() {
         `An error occured during assigning plotter: ${error.message}`
       );
     } finally {
-      if (logContainer.current)
-        logContainer.current.scrollTop = logContainer.current.scrollHeight;
+      if(running){
+        if (logContainer.current)
+          logContainer.current.scrollTop = logContainer.current.scrollHeight;
+      }
     }
-  }, [openDB, DB_NAME, DB_VERSION, setData, logContainer, indexDb]);
+  }, [openDB, DB_NAME, DB_VERSION, setData, logContainer, indexDb, running]);
 
   const handleClearLogDataBase = useCallback(async () => {
     try {
