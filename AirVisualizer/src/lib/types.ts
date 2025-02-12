@@ -12,6 +12,7 @@ type PerformanceDataT = {
 }
 
 type PlotT = {
+    plotterId: string;
     dataPoint: number;
     timestamp: Date;
 }
@@ -55,5 +56,6 @@ export type {
     DeviceT,
     LoggerT,
     PortT,
-    LogMessageT
+    LogMessageT,
+    PlotT
 }

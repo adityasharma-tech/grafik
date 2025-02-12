@@ -24,7 +24,7 @@ export default function AssignPlotter() {
           plotterId,
           plotterName,
           deviceId,
-          color: getRandomColor(),
+          color: getRandomColor()
         });
       } catch (error: any) {
         console.error(

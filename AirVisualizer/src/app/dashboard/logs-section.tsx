@@ -1,36 +1,64 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { formatTime } from "../../lib/utils";
-import { openDB } from "idb";
+import { IDBPDatabase, openDB } from "idb";
 import { DB_NAME, DB_VERSION } from "../../lib/db";
 import { LogMessageT } from "../../lib/types";
+import useAppState from "../../lib/store";
 
 export default function LogsSection() {
+  const [data, setData] = useState<LogMessageT[]>([]);
 
-  const [data, setData] = useState<LogMessageT[]>([]) 
+  const running = useAppState(state=>state.running)
+  const logContainer = useRef<HTMLDivElement|null>(null)
+  const indexDb = useRef<IDBPDatabase | null>(null)
 
-  const handleDataReading = useCallback(async ()=>{
+  const handleDataReading = useCallback(async () => {
     try {
-      const db = await openDB(DB_NAME, DB_VERSION)
-      setData(await db.getAll("logs"))
+      if(!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if(indexDb.current.objectStoreNames.contains("logs"))
+      setData(await indexDb.current.getAll("logs"));
     } catch (error: any) {
       console.error(
         `An error occured during assigning plotter: ${error.message}`
       );
+    } finally {
+      if(logContainer.current) logContainer.current.scrollTop = logContainer.current.scrollHeight
     }
-  }, [openDB, DB_NAME, DB_VERSION, setData])
+  }, [openDB, DB_NAME, DB_VERSION, setData, logContainer, indexDb]);
 
-  useEffect(()=>{
-    const timeout = setInterval(async ()=> await handleDataReading(), 100)
-    return () => {
-      clearInterval(timeout)
+  const handleClearLogDataBase = useCallback(async () => {
+    try {
+      if (running) throw new Error("Could not clear logs while running database.")
+      if(!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION)
+      await indexDb.current.clear("logs")
+      indexDb.current.close()
+    } catch (error: any) {
+      console.error(`Error occurred during clearing log database: ${error.message}`)
     }
-  }, [])
-  
+  }, [openDB, DB_NAME, DB_VERSION, running])
+
+  useEffect(() => {
+    const timeout = setInterval(async () => await handleDataReading(), 100);
+    return () => {
+      clearInterval(timeout);
+    };
+  }, []);
+
   return (
     <div className="border min-h-[55vh] flex flex-col max-h-[65vh] w-full bg-neutral-50 border-[#e2e2e2] rounded-xl px-3 py-2">
       <div className="flex justify-between">
         <span className="text-sm font-medium">Log messages</span>
         <div className="flex gap-x-0.5">
+          <button onClick={handleClearLogDataBase} disabled={running} className="rounded-md disabled:opacity-40 disabled:cursor-not-allowed h-6 w-6 ml-1.5 flex justify-center items-center hover:bg-neutral-100 opacity-60 hover:opacity-100">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M4 12a8 8 0 0112.407-6.678L6.075 17.376A7.97 7.97 0 014 12zm3.593 6.678A8 8 0 0017.925 6.624L7.593 18.678zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
+                fill="#000"
+              />
+            </svg>
+          </button>
           <button className="rounded-md h-6 w-6 ml-1.5 flex justify-center items-center hover:bg-neutral-100 opacity-60 hover:opacity-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +91,7 @@ export default function LogsSection() {
           </button>
         </div>
       </div>
-      <div className="flex flex-col-reverse flex-grow gap-y-2 py-1">
+      <div ref={logContainer} className="flex flex-col flex-grow gap-y-2 py-1 overflow-y-scroll">
         {data.map((log, idx) => (
           <LogMessage key={idx} {...log} />
         ))}
@@ -73,17 +101,27 @@ export default function LogsSection() {
 }
 
 function LogMessage(props: LogMessageT) {
-  return <div style={{
-    borderLeftColor: props.logType == "log" ? "oklch(0.627 0.194 149.214)" : props.logType == "error" ? "oklch(0.577 0.245 27.325)" : props.logType == "warn" ? "oklch(0.681 0.162 75.834)" : undefined
-  }} className="flex justify-between bg-neutral-100 inset-shadow-sm rounded-md border-l-2 px-1.5 py-1">
-    <span className="text-neutral-800">{props.message}</span>
-    <div className="flex gap-x-2">
-      <span className="text-neutral-500 text-sm self-center">
-        {formatTime(props.timestamp)}
-      </span>
-      <span>
-        [{props.loggerId}]
-      </span>
+  return (
+    <div
+      style={{
+        borderLeftColor:
+          props.logType == "log"
+            ? "oklch(0.627 0.194 149.214)"
+            : props.logType == "error"
+            ? "oklch(0.577 0.245 27.325)"
+            : props.logType == "warn"
+            ? "oklch(0.681 0.162 75.834)"
+            : undefined,
+      }}
+      className="flex justify-between bg-neutral-100 inset-shadow-sm rounded-md border-l-2 px-1.5 py-1"
+    >
+      <span className="text-neutral-800">{props.message}</span>
+      <div className="flex gap-x-2">
+        <span className="text-neutral-500 text-sm self-center">
+          {formatTime(props.timestamp)}
+        </span>
+        <span>[{props.loggerId}]</span>
+      </div>
     </div>
-  </div>;
+  );
 }

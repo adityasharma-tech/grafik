@@ -1,5 +1,5 @@
 export const DB_NAME = "GrafikDB";
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 const createIndexesInStores = () => {
   return new Promise<IDBDatabase>((resolve, reject) => {
@@ -11,7 +11,7 @@ const createIndexesInStores = () => {
       if (!db.objectStoreNames.contains("plotters"))
         db.createObjectStore("plotters", { keyPath: "plotterId" });
       if (!db.objectStoreNames.contains("plots"))
-        db.createObjectStore("plots", { keyPath: "plotId" });
+        db.createObjectStore("plots", { keyPath: "plotId", autoIncrement: true });
       if (!db.objectStoreNames.contains("logs"))
         db.createObjectStore("logs", { keyPath: "logId", autoIncrement: true });
       if (!db.objectStoreNames.contains("devices"))
