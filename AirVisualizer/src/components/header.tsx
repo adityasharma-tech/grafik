@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDialogHook } from "../hooks/dialog-hooks";
 import useAppState from "../lib/store";
 import { IDBPDatabase, openDB } from "idb";
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown";
 import { toast } from "sonner";
+import { getRandomColor } from "../lib/utils";
 
 export default function Header() {
   const dialog = useDialogHook();
@@ -19,10 +20,44 @@ export default function Header() {
   const isRunning = useRef(false);
   const db = useRef<IDBPDatabase<unknown> | null>(null);
 
+  const loggersRef = useRef<Map<string, { loggerId: string; loggerName: string; deviceId: string; color: string }>>(new Map());
+
+  const loadLoggers = useCallback(async () => {
+    if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+    const storedLoggers = await db.current.getAll("loggers");
+  
+    // Store loggers in a Map for fast lookup
+    loggersRef.current = new Map(storedLoggers.map(logger => [logger.loggerId, logger]));
+  }, [db, openDB, DB_NAME, DB_VERSION]);
+
+  useEffect(() => {
+    loadLoggers();
+  }, [loadLoggers]);
+
+  const addLogger = useCallback(async (lid: string, did: string) => {
+    try {
+      if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+      if (!loggersRef.current.has(lid.trim())) {
+        const newLogger = {
+          loggerId: lid,
+          loggerName: "",
+          deviceId: did,
+          color: getRandomColor(),
+        };
+  
+        await db.current.add("loggers", newLogger);
+        loggersRef.current.set(lid.trim(), newLogger);
+      }
+    } catch (error: any) {
+      console.error(`Error occured during logging data: ${error.message}`);
+    }
+  }, [db.current, openDB, DB_NAME, DB_VERSION, getRandomColor]);
+
   const addLogData = useCallback(
     async (deviceId: number, loggerId: number, message: string) => {
       try {
         if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+        await addLogger(loggerId.toString(), deviceId.toString())
         await db.current.add("logs", {
           deviceId: deviceId.toString(),
           loggerId: loggerId.toString(),
@@ -77,7 +112,7 @@ export default function Header() {
           }
           const decodedValue = new TextDecoder().decode(value);
           buffer += decodedValue;
-          
+
           let messages = buffer.split(";;");
           buffer = messages.pop() || "";
           for (const msg of messages) {
@@ -120,28 +155,28 @@ export default function Header() {
       if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
       const plotterData = await db.current.getAll("plots");
       const loggerData = await db.current.getAll("logs");
-      function exportData (data: any, filename: string){
-       // Extract headers dynamically from the first object keys
-      const headers = Object.keys(data[0]).join(",");
+      function exportData(data: any, filename: string) {
+        // Extract headers dynamically from the first object keys
+        const headers = Object.keys(data[0]).join(",");
 
-      // Convert object values into CSV rows
-      const rows = data.map((row: any) => Object.values(row).join(","));
+        // Convert object values into CSV rows
+        const rows = data.map((row: any) => Object.values(row).join(","));
 
-      // Combine headers and rows
-      const csvContent =
-        "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
+        // Combine headers and rows
+        const csvContent =
+          "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
 
-      // Encode CSV and trigger download
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link); 
+        // Encode CSV and trigger download
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
-      exportData(plotterData, `${new Date()}-plotters.csv`)
-      exportData(loggerData, `${new Date()}-loggers.csv`)
+      exportData(plotterData, `${new Date()}-plotters.csv`);
+      exportData(loggerData, `${new Date()}-loggers.csv`);
     } catch (error: any) {
       console.error(`Error occured during exporting data: ${error.message}`);
       toast("Some error occured during exporting your data.");
@@ -181,7 +216,7 @@ export default function Header() {
         </div>
       </div>
       <div className="flex gap-x-5 items-center">
-        <div className="flex border rounded-xl bg-white font-medium border-[#D8D8D8] overflow-hidden">
+        <div className="flex border rounded-xl hidden bg-white font-medium border-[#D8D8D8] overflow-hidden">
           <button
             type="button"
             onClick={dialog?.tooglePlotterDialog}
@@ -201,10 +236,10 @@ export default function Header() {
         <div>
           <button
             type="button"
-            onClick={dialog?.toogleAttachDeviceDialog}
+            onClick={dialog?.tooglePlotterDialog}
             className="hover:bg-neutral-100 rounded-xl border border-[#D8D8D8] font-medium bg-white px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none"
           >
-            Attach Device
+            New Plotter
           </button>
         </div>
         <button

@@ -1,11 +1,11 @@
-import { FormEventHandler, useCallback, useEffect, useState } from "react";
+import { FormEventHandler, useCallback, useState } from "react";
 import SelectInput from "../../../components/ui/select-input";
 import TextInput from "../../../components/ui/text-input";
 import { useDialogHook } from "../../../hooks/dialog-hooks";
-import { DeviceT } from "../../../lib/types";
 import { openDB } from "idb";
 import { DB_NAME, DB_VERSION } from "../../../lib/db";
 import { getRandomColor } from "../../../lib/utils";
+import useAppState from "../../../lib/store";
 
 export default function AssignPlotter() {
   const dialog = useDialogHook();
@@ -13,7 +13,8 @@ export default function AssignPlotter() {
   const [plotterId, setPlotterId] = useState("");
   const [plotterName, setPlotterName] = useState("");
   const [deviceId, setDeviceId] = useState("");
-  const [devices, setDevices] = useState<DeviceT[]>([]);
+
+  const ports = useAppState((state)=>state.ports)
 
   const handleAssignPlotter: FormEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
@@ -46,21 +47,6 @@ export default function AssignPlotter() {
     ]
   );
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const db = await openDB(DB_NAME, DB_VERSION);
-        const result = await db.getAll("devices");
-        setDevices(result);
-        setDeviceId(deviceId.length >= 0 ? result[0].deviceId : "");
-      } catch (error: any) {
-        console.error(
-          `Some error occured during get devices data: ${error.message}`
-        );
-      }
-    })();
-  }, []);
-
   return (
     <section className="h-screen flex justify-center items-center w-screen absolute inset-0 bg-black/20 backdrop-blur-xs">
       <div className="min-w-xl rounded-2xl bg-neutral-100 inset-shadow-sm p-3">
@@ -83,12 +69,12 @@ export default function AssignPlotter() {
           <div className="flex flex-col gap-y-4">
             <div className="flex gap-x-3">
               <SelectInput
-                values={devices.map((d, idx) => (
-                  <option key={idx} value={d.deviceId}>COM{d.deviceId}</option>
+                values={ports.map((d, idx) => (
+                  <option key={idx} value={d.port}>COM{idx}</option>
                 ))}
                 value={deviceId}
                 setValue={setDeviceId}
-                label="Device ID"
+                label="Serial Port"
               />
               <TextInput
                 required

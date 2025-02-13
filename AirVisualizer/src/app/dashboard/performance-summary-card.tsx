@@ -7,7 +7,6 @@ export default function PerformanceSummaryCard() {
   const totalPorts = useAppState((state) => state.ports.length);
 
   const [data, setData] = useState<{
-    devices?: number;
     plotters?: number;
     loggers?: number;
     logs?: number;
@@ -21,15 +20,11 @@ export default function PerformanceSummaryCard() {
       const db = await openDB(DB_NAME, DB_VERSION);
 
       const localData: {
-        devices?: number;
         plotters?: number;
         loggers?: number;
         logs?: number;
         plots?: number;
       } = {}
-
-      if (db.objectStoreNames.contains("devices"))
-        localData.devices = (await db.getAll("devices")).length
 
       if (db.objectStoreNames.contains("loggers"))
         localData.loggers = (await db.getAll("loggers")).length
@@ -70,11 +65,6 @@ export default function PerformanceSummaryCard() {
         <PerformancePointSpan
           label="Ports"
           content={totalPorts?.toString()}
-          desc="All"
-        />
-        <PerformancePointSpan
-          label="Devices"
-          content={data.devices?.toString() ?? "0"}
           desc="All"
         />
         <PerformancePointSpan
