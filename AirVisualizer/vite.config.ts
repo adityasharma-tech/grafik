@@ -8,21 +8,21 @@ export default defineConfig({
   server: {
     allowedHosts: ['grafik.adityasharma.live']
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if(id.includes("node_modules")){
-            return "vendor"
-          }
-          if(id.includes("components")){
-            return "components"
-          }
-        }
-      }
-    }
-  },
-  optimizeDeps: {
-    include: ["lodash", "moment", "echarts", "zustand"]
-  }
+  // build: {
+  //   rollupOptions: {
+  //     output: {
+  //       manualChunks(id) {
+  //         if(id.includes("node_modules")){
+  //           return "vendor"
+  //         }
+  //         if(id.includes("components")){
+  //           return "components"
+  //         }
+  //       }
+  //     }
+  //   }
+  // },
+  // optimizeDeps: {
+  //   include: ["lodash", "moment", "echarts", "zustand"]
+  // }
 })

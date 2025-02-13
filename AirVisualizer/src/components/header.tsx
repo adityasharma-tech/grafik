@@ -56,7 +56,7 @@ export default function Header() {
 
   const runPort = useCallback(
     async (port: any, index: number) => {
-      if (!(window.navigator && "serial" in navigator)) return;
+      // if (!(window.navigator && "serial" in navigator)) return;
       try {
         try {
           await port.open({ baudRate: 9600 });
@@ -71,14 +71,13 @@ export default function Header() {
             break;
           }
           if (isRunning.current == false) {
-            console.log("Is this correct.", isRunning);
             await reader.releaseLock();
             await port.close();
             break;
           }
           const decodedValue = new TextDecoder().decode(value);
           buffer += decodedValue;
-
+          
           let messages = buffer.split(";;");
           buffer = messages.pop() || "";
           for (const msg of messages) {
@@ -94,7 +93,6 @@ export default function Header() {
                 dataType.trim() != "" &&
                 dataId.trim() != ""
               ) {
-                // console.log(`Data is here, ${deviceId} ${dataId} ${data} ${dataType}`)
                 switch (dataType) {
                   case "plot":
                     await addPlotData(+deviceId.trim(), +dataId.trim(), +data);
