@@ -216,7 +216,7 @@ export default function Header() {
         </div>
       </div>
       <div className="flex gap-x-5 items-center">
-        <div className="flex border rounded-xl hidden bg-white font-medium border-[#D8D8D8] overflow-hidden">
+        <div className="border rounded-xl hidden bg-white font-medium border-[#D8D8D8] overflow-hidden">
           <button
             type="button"
             onClick={dialog?.tooglePlotterDialog}
