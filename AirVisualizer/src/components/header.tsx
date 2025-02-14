@@ -199,7 +199,7 @@ export default function Header() {
 
   return (
     <header className="h-16 pt-1 bg-gradient-to-b from-[#F6F6F6] to-white items-center flex justify-between px-10">
-      <div className="flex gap-x-4">
+      <div className="#flex hidden gap-x-4">
         <div className="flex items-center">
           <img src="https://avatar.iran.liara.run/public" className="h-8 w-8" />
         </div>
@@ -214,6 +214,11 @@ export default function Header() {
           </span>
           <span className="text-neutral-500 text-[10px]">Developer</span>
         </div>
+      </div>
+      <div className="flex items-center">
+        <img className="h-6" src="/logo.png" style={{
+          filter: 'invert(1)'
+        }} />
       </div>
       <div className="flex gap-x-5 items-center">
         <div className="border rounded-xl hidden bg-white font-medium border-[#D8D8D8] overflow-hidden">

@@ -1,5 +1,5 @@
-export const DB_NAME = "GrafikDB";
-export const DB_VERSION = 1;
+export const DB_NAME = "Grafik";
+export const DB_VERSION = 2
 
 const createIndexesInStores = () => {
   return new Promise<IDBDatabase>((resolve, reject) => {

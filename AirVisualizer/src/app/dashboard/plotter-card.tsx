@@ -3,6 +3,7 @@ import useAppState from "../../lib/store";
 import { IDBPDatabase, openDB } from "idb";
 import { DB_NAME, DB_VERSION } from "../../lib/db";
 import ReactEcharts from "./graph";
+import { getRandomColor } from "../../lib/utils";
 
 interface PlotterCardPropT {
   plotterId: string;
@@ -31,11 +32,6 @@ export default function PlotterCard(props: PlotterCardPropT) {
     try {
       if (!isRunning.current) return;
       if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
-      if (isRestarting.current) {
-        setPlottingData((data) => [...data, null]);
-        toogleRestarting();
-        isRestarting.current = false;
-      }
 
       if (indexDb.current.objectStoreNames.contains("plots")) {
         const data = await indexDb.current.getAllFromIndex(
@@ -96,7 +92,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
       className={`border overflow-hidden border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3 ${
         maximized
           ? "bg-white z-10 inset-20 absolute"
-          : "relative bg-neutral-50/20 h-64"
+          : "relative bg-neutral-50/20 h-96"
       }`}
     >
       <div className="flex justify-between">
@@ -201,7 +197,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
       <ReactEcharts
         height={
           containerRef.current
-            ? containerRef.current.clientHeight - 35
+            ? containerRef.current.clientHeight
             : undefined
         }
         option={{
@@ -229,18 +225,23 @@ export default function PlotterCard(props: PlotterCardPropT) {
             right: 40,
             bottom: 30,
             top: 0,
+            containLabel: true
           },
           xAxis: {
             type: "time",
             splitLine: {
-              show: false,
+              show: !running
             },
+            name: "Time",
+            axisLabel: {
+              rotate: 10
+            }
           },
           yAxis: {
             type: "value",
             boundaryGap: [0, "100%"],
             splitLine: {
-              show: false,
+              show: true,
             },
           },
           series: [
@@ -250,6 +251,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
               showSymbol: false,
               data: plottingData,
               connectNulls: false,
+              color: props.color
             },
           ],
         }}

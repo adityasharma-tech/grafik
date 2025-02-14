@@ -2,6 +2,8 @@ import React, { useCallback, useState } from "react";
 import useAppState from "../../lib/store";
 import { openDB } from "idb";
 import { DB_NAME, DB_VERSION } from "../../lib/db";
+import { getRandomColor } from "../../lib/utils";
+import { rgba } from 'polished'
 
 export default function PerformanceSummaryCard() {
   const totalPorts = useAppState((state) => state.ports.length);
@@ -102,7 +104,7 @@ const PerformancePointSpan = (perf: {
       <div
         className="border-l-2 flex flex-col gap-y-1 px-2"
         style={{
-          borderColor: "#c10007",
+          borderColor: rgba(getRandomColor(), 0.3),
         }}
       >
         <span className="text-sm">{perf.label}</span>
