@@ -3,7 +3,6 @@ import useAppState from "../../lib/store";
 import { IDBPDatabase, openDB } from "idb";
 import { DB_NAME, DB_VERSION } from "../../lib/db";
 import ReactEcharts from "./graph";
-import { getRandomColor } from "../../lib/utils";
 
 interface PlotterCardPropT {
   plotterId: string;
@@ -16,10 +15,7 @@ interface PlotterCardPropT {
 
 export default function PlotterCard(props: PlotterCardPropT) {
   const running = useAppState((state) => state.running);
-  const restarting = useAppState((state) => state.restarting);
-  const toogleRestarting = useAppState((state) => state.toogleRestarting);
   const isRunning = useRef(false);
-  const isRestarting = useRef(true);
 
   const indexDb = useRef<IDBPDatabase<undefined> | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -40,7 +36,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
           props.plotterId.toString()
         );
         const result = data
-          .splice(data.length > 400 ? -200 : 0)
+          .splice(-200)
           .map((data) => ({
             name: new Date(+data.timestamp).getTime(),
             value: [+data.timestamp, +data.dataPoint],
@@ -84,8 +80,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
 
   useEffect(() => {
     isRunning.current = running;
-    isRestarting.current = restarting;
-  }, [running, restarting]);
+  }, [running]);
   return (
     <div
       ref={containerRef}
