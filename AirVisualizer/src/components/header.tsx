@@ -242,7 +242,7 @@ export default function Header() {
           <button
             type="button"
             onClick={dialog?.tooglePlotterDialog}
-            className="hover:bg-neutral-100 rounded-xl border border-[#D8D8D8] font-medium bg-white px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none"
+            className="hover:bg-neutral-100 rounded-xl borde border-[#D8D8D8] font-medium bg-white px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none"
           >
             New Plotter
           </button>

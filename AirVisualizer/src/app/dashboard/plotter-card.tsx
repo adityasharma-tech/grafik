@@ -243,6 +243,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
             {
               name: "Data",
               type: "line",
+              // step: "start",
               showSymbol: false,
               data: plottingData,
               connectNulls: false,
