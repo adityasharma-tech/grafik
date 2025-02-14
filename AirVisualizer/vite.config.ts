@@ -8,6 +8,7 @@ export default defineConfig({
   server: {
     allowedHosts: ['grafik.adityasharma.live']
   },
+  base: "/"
   // build: {
   //   rollupOptions: {
   //     output: {
