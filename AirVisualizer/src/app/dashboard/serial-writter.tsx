@@ -8,7 +8,7 @@ export default function SerialWritter() {
   }
 
   return (
-    <div className="border min-h-[30vh] flex flex-col max-h-[40vh] w-full bg-neutral-50/20 border-[#e2e2e2] rounded-xl px-3 py-2">
+    <div className="borde min-h-[30vh] flex flex-col max-h-[40vh] w-full bg-white border-[#e2e2e2] rounded-xl px-3 py-2">
       <div className="flex justify-between">
         <span className="text-sm font-medium">Serial writter</span>
         <div className="flex gap-x-0.5">

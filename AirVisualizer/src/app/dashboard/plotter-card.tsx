@@ -84,10 +84,10 @@ export default function PlotterCard(props: PlotterCardPropT) {
   return (
     <div
       ref={containerRef}
-      className={`border overflow-hidden border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3 ${
+      className={`borde overflow-hidden bg-white border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3 ${
         maximized
-          ? "bg-white z-10 inset-20 absolute"
-          : "relative bg-neutral-50/20 h-96"
+          ? "z-10 inset-20 absolute"
+          : "relative h-96"
       }`}
     >
       <div className="flex justify-between">

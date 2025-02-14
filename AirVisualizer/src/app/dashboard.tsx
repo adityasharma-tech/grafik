@@ -62,13 +62,13 @@ export default function Dashboard() {
   }, [window]);
 
   return (
-    <div className="flex flex-col gap-1 h-screen w-screen overflow-x-hidden overflow-y-auto">
+    <div className="flex flex-col bg-neutral-100 gap-1 h-screen w-screen overflow-x-hidden overflow-y-auto">
       <Header />
       <main className="md:px-10 px-3">
         <PerformanceSummaryCard />
-        <div className="flex md:flex-row flex-col gap-2">
+        <div className="flex md:flex-row flex-col gap-3 py-2 gap-x-4">
           <PlotterGroup />
-          <div className="w-[30%] flex flex-col gap-y-2">
+          <div className="w-[30%] flex flex-col gap-y-4">
             <LogsSection />
             <SerialWritter />
           </div>

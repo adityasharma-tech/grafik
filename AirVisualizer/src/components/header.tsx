@@ -198,7 +198,7 @@ export default function Header() {
   }, [state.running]);
 
   return (
-    <header className="h-16 pt-1 bg-gradient-to-b from-[#F6F6F6] to-white items-center flex justify-between px-10">
+    <header className="h-16 bg-gradient-to-b from-neutral-200 to-neutral-100 items-center flex justify-between px-10 py-3">
       <div className="#flex hidden gap-x-4">
         <div className="flex items-center">
           <img src="https://avatar.iran.liara.run/public" className="h-8 w-8" />

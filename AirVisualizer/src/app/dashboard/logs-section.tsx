@@ -55,10 +55,10 @@ export default function LogsSection() {
     <React.Fragment>
       {maximized ? <div className="z-10 bg-black/10 backdrop-blur-xs inset-0 fixed" /> : null}
       <div
-        className={`border flex flex-col border-[#e2e2e2] rounded-xl px-3 py-2 ${
+        className={`borde flex flex-col border-[#e2e2e2] rounded-xl px-3 py-2 ${
           maximized
             ? "fixed z-20 inset-16 bg-white/50 backdrop-blur-md"
-            : "relative bg-neutral-50/20 max-h-[65vh] min-h-[55vh] w-full"
+            : "relative bg-white max-h-[65vh] min-h-[55vh] w-full"
         }`}
       >
         <div className="flex justify-between">
