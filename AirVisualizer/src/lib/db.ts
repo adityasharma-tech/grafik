@@ -1,4 +1,4 @@
-export const DB_NAME = "Grafik";
+export const DB_NAME = "GrafikDb";
 export const DB_VERSION = 2
 
 const createIndexesInStores = () => {
