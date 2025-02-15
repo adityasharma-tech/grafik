@@ -1,10 +1,10 @@
 import * as React from "react";
 
-function temp(props) {
+function svg() {
   return (
-    <svg width={800} height={800} viewBox="0 0 24 24" fill="none" {...props}>
+    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
       <path
-        d="M5 12h14m0 0l-6-6m6 6l-6 6"
+        d="M6 12h12"
         stroke="#000"
         strokeWidth={2}
         strokeLinecap="round"
@@ -14,5 +14,5 @@ function temp(props) {
   );
 }
 
-const Memotemp = React.memo(temp);
-export default Memotemp;
+const Memosvg = React.memo(svg);
+export default Memosvg;
