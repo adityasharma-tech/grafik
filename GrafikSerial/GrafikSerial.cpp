@@ -6,7 +6,7 @@ GrafikLogger::GrafikLogger(int deviceId, int loggerId)
 
 void GrafikLogger::log(const char* message) {
     char buffer[64];
-    snprintf(buffer, sizeof(buffer), "%d log %d\t: %s", deviceId, loggerId, message);
+    snprintf(buffer, sizeof(buffer), "%d log %d\t: %s;;", deviceId, loggerId, message);
     Serial.println(buffer);
 }
 
@@ -19,7 +19,7 @@ void GrafikPlotter::plotData(float data) {
     char dataStr[10];  
     dtostrf(data, 6, 2, dataStr);
 
-    snprintf(buffer, sizeof(buffer), "%d plot %d\t: %s", deviceId, plotterId, dataStr);
+    snprintf(buffer, sizeof(buffer), "%d plot %d\t: %s;;", deviceId, plotterId, dataStr);
     Serial.println(buffer);
 }
 
