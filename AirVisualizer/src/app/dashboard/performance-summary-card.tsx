@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import useAppState from "../../lib/store";
 import { openDB } from "idb";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
+import { initializeDatabase } from "../../lib/db";
 import { getRandomColor } from "../../lib/utils";
 import { rgba } from 'polished'
 
@@ -46,7 +46,7 @@ export default function PerformanceSummaryCard() {
     } finally {
       setRandomId(Math.random());
     }
-  }, [openDB, DB_NAME, DB_VERSION, setData, setRandomId]);
+  }, [openDB, setData, setRandomId]);
 
   React.useEffect(() => {
     const interval = setInterval(

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { formatTime } from "../../lib/utils";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
+import { initializeDatabase } from "../../lib/db";
 import { LogMessageT } from "../../lib/types";
 import useAppState from "../../lib/store";
 
@@ -29,7 +29,7 @@ export default function LogsSection() {
           logContainer.current.scrollTop = logContainer.current.scrollHeight;
       }
     }
-  }, [openDB, DB_NAME, DB_VERSION, setData, logContainer, indexDb, running]);
+  }, [openDB, setData, logContainer, indexDb, running]);
 
   const handleClearLogDataBase = useCallback(async () => {
     try {
@@ -42,7 +42,7 @@ export default function LogsSection() {
         `Error occurred during clearing log database: ${error.message}`
       );
     }
-  }, [openDB, DB_NAME, DB_VERSION, running, setData, indexDb]);
+  }, [openDB, running, setData, indexDb]);
 
   useEffect(() => {
     const timeout = setInterval(async () => await handleDataReading(), 100);

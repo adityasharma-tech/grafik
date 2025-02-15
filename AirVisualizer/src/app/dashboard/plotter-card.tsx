@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import useAppState from "../../lib/store";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
+import { initializeDatabase } from "../../lib/db";
 import ReactEcharts from "./graph";
 
 interface PlotterCardPropT {
@@ -46,7 +46,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
     } catch (error: any) {
       console.error(`Error during reading plotters data: ${error.message}`);
     }
-  }, [isRunning, indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData, props]);
+  }, [isRunning, indexDb, openDB, setPlottingData, props]);
 
   const handleClearPlottingData = useCallback(async () => {
     try {
@@ -58,7 +58,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
     } catch (error: any) {
       console.error(`Error during reading plotters data: ${error.message}`);
     }
-  }, [indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData]);
+  }, [indexDb, openDB, setPlottingData]);
 
   const handleDeletePlotter = useCallback(async () => {
     try {
@@ -69,7 +69,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
     } catch (error: any) {
       console.error(`Error during reading plotters data: ${error.message}`);
     }
-  }, [indexDb, openDB, DB_NAME, DB_VERSION, setPlottingData, props]);
+  }, [indexDb, openDB, setPlottingData, props]);
 
   useEffect(() => {
     const interval = setInterval(async () => await handleDataReading(), 100);

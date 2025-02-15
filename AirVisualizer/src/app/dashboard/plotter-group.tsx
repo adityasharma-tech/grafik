@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import PlotterCard from "./plotter-card";
 import { moveElementDown, moveElementUp } from "../../lib/utils";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
+import { initializeDatabase } from "../../lib/db";
 
 export default function PlotterGroup() {
   const [plotters, setPlotters] = useState<any[]>([]);
@@ -36,7 +36,7 @@ export default function PlotterGroup() {
     } catch (error: any) {
       console.error(`Failed to get plotter data: ${error.message}`);
     }
-  }, [indexDb, openDB, DB_NAME, DB_VERSION, setPlotters]);
+  }, [indexDb, openDB, setPlotters]);
 
   useEffect(() => {
     const interval = setInterval(async () => await getAllPlotters(), 500);

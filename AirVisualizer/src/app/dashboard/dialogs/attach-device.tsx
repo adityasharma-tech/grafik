@@ -5,7 +5,7 @@ import { useDialogHook } from "../../../hooks/dialog-hooks";
 import useAppState from "../../../lib/store";
 import { openDB } from "idb";
 import { toast } from "sonner";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../../../lib/db";
+import { initializeDatabase } from "../../../lib/db";
 
 export default function AttachDevice() {
   const dialog = useDialogHook();

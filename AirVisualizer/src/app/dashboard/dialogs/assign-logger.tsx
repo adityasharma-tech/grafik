@@ -4,7 +4,7 @@ import TextInput from "../../../components/ui/text-input";
 import { useDialogHook } from "../../../hooks/dialog-hooks";
 import { DeviceT } from "../../../lib/types";
 import { openDB } from "idb";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../../../lib/db";
+import { initializeDatabase } from "../../../lib/db";
 import { getRandomColor } from "../../../lib/utils";
 
 export default function AssignLogger() {
@@ -41,9 +41,7 @@ export default function AssignLogger() {
       loggerId,
       loggerName,
       deviceId,
-      getRandomColor,
-      DB_NAME,
-      DB_VERSION,
+      getRandomColor
     ]
   );
 

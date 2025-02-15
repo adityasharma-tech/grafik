@@ -3,7 +3,7 @@ import SelectInput from "../../../components/ui/select-input";
 import TextInput from "../../../components/ui/text-input";
 import { useDialogHook } from "../../../hooks/dialog-hooks";
 import { openDB } from "idb";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../../../lib/db";
+import { initializeDatabase } from "../../../lib/db";
 import { getRandomColor } from "../../../lib/utils";
 import useAppState from "../../../lib/store";
 
@@ -38,8 +38,6 @@ export default function AssignPlotter() {
     [
       dialog,
       openDB,
-      DB_NAME,
-      DB_VERSION,
       plotterId,
       plotterName,
       deviceId,

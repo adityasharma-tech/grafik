@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDialogHook } from "../hooks/dialog-hooks";
 import useAppState from "../lib/store";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION, initializeDatabase } from "../lib/db";
+import { initializeDatabase } from "../lib/db";
 
 import {
   DropdownMenu,
@@ -28,7 +28,7 @@ export default function Header() {
   
     // Store loggers in a Map for fast lookup
     loggersRef.current = new Map(storedLoggers.map(logger => [logger.loggerId, logger]));
-  }, [db, openDB, DB_NAME, DB_VERSION]);
+  }, [db, openDB]);
 
   useEffect(() => {
     loadLoggers();
@@ -51,7 +51,7 @@ export default function Header() {
     } catch (error: any) {
       console.error(`Error occured during logging data: ${error.message}`);
     }
-  }, [db.current, openDB, DB_NAME, DB_VERSION, getRandomColor]);
+  }, [db.current, openDB, getRandomColor]);
 
   const addLogData = useCallback(
     async (deviceId: number, loggerId: number, message: string) => {
@@ -68,7 +68,7 @@ export default function Header() {
         console.error(`Error occured during logging data: ${error.message}`);
       }
     },
-    [db, openDB, Date, DB_NAME, DB_VERSION]
+    [db, openDB, Date]
   );
 
   const addPlotData = useCallback(
@@ -86,7 +86,7 @@ export default function Header() {
         );
       }
     },
-    [db, openDB, DB_NAME, DB_VERSION]
+    [db, openDB]
   );
 
   const runPort = useCallback(
@@ -181,7 +181,7 @@ export default function Header() {
       console.error(`Error occured during exporting data: ${error.message}`);
       toast("Some error occured during exporting your data.");
     }
-  }, [toast, db, openDB, DB_NAME, DB_VERSION, encodeURI]);
+  }, [toast, db, openDB, encodeURI]);
 
   useEffect(() => {
     if (!state.running) return;
