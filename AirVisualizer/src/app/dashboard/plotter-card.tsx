@@ -3,7 +3,8 @@ import useAppState from "../../lib/store";
 import { IDBPDatabase, openDB } from "idb";
 import { initializeDatabase } from "../../lib/db";
 import ReactEcharts from "./graph";
-
+import { Switch } from "radix-ui";
+import { toast } from "sonner";
 interface PlotterCardPropT {
   plotterId: string;
   plotterName?: string;
@@ -19,7 +20,8 @@ export default function PlotterCard(props: PlotterCardPropT) {
 
   const indexDb = useRef<IDBPDatabase | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  const [stepType, setStepType] = useState(false);
+  
   const [plottingData, setPlottingData] = useState<any[]>([]);
 
   const [maximized, setMaximized] = useState<boolean>(false);
@@ -35,12 +37,10 @@ export default function PlotterCard(props: PlotterCardPropT) {
           "plotterId",
           props.plotterId.toString()
         );
-        const result = data
-          .splice(-200)
-          .map((data) => ({
-            name: new Date(+data.timestamp).getTime(),
-            value: [+data.timestamp, +data.dataPoint],
-          }));
+        const result = data.splice(-200).map((data) => ({
+          name: new Date(+data.timestamp).getTime(),
+          value: [+data.timestamp, +data.dataPoint],
+        }));
         setPlottingData(result);
       }
     } catch (error: any) {
@@ -50,26 +50,28 @@ export default function PlotterCard(props: PlotterCardPropT) {
 
   const handleClearPlottingData = useCallback(async () => {
     try {
-      if (!indexDb.current) indexDb.current = await initializeDatabase()
+      if (!indexDb.current) indexDb.current = await initializeDatabase();
       if (indexDb.current.objectStoreNames.contains("plots")) {
         await indexDb.current.clear("plots");
         setPlottingData([]);
       }
+      toast(`Plotting data cleared for plotter ${props.plotterId}`);
     } catch (error: any) {
       console.error(`Error during reading plotters data: ${error.message}`);
     }
-  }, [indexDb, openDB, setPlottingData]);
+  }, [indexDb, openDB, setPlottingData, toast]);
 
   const handleDeletePlotter = useCallback(async () => {
     try {
       if (!indexDb.current) indexDb.current = await initializeDatabase();
       if (indexDb.current.objectStoreNames.contains("plotters")) {
         await indexDb.current.delete("plotters", props.plotterId);
+        toast(`Plotter id ${props.plotterId} deleted.`);
       }
     } catch (error: any) {
       console.error(`Error during reading plotters data: ${error.message}`);
     }
-  }, [indexDb, openDB, setPlottingData, props]);
+  }, [indexDb, openDB, setPlottingData, props, toast]);
 
   useEffect(() => {
     const interval = setInterval(async () => await handleDataReading(), 100);
@@ -85,9 +87,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
     <div
       ref={containerRef}
       className={`borde overflow-hidden bg-white border-[#e2e2e2] rounded-xl px-3 py-2 first:mt-0 mt-3 ${
-        maximized
-          ? "z-10 inset-20 absolute"
-          : "relative h-96"
+        maximized ? "z-10 inset-20 absolute" : "relative h-96"
       }`}
     >
       <div className="flex justify-between">
@@ -96,7 +96,14 @@ export default function PlotterCard(props: PlotterCardPropT) {
             ? props.plotterId
             : props.plotterName?.trim()}
         </span>
-        <div className="flex gap-x-0.5">
+        <div className="flex gap-x-1">
+          <Switch.Root checked={stepType} onCheckedChange={(checked)=>{
+            if(!checked) toast(`Step type plotting disabled for plotter ${props.plotterId}`)
+              else toast(`Step type plotting enabled for plotter ${props.plotterId}`)
+            setStepType(checked)
+          }} className="SwitchRoot my-auto" id="airplane-mode">
+            <Switch.Thumb className="SwitchThumb" />
+          </Switch.Root>
           <button
             type="button"
             onClick={handleClearPlottingData}
@@ -191,9 +198,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
       </div>
       <ReactEcharts
         height={
-          containerRef.current
-            ? containerRef.current.clientHeight
-            : undefined
+          containerRef.current ? containerRef.current.clientHeight : undefined
         }
         option={{
           tooltip: {
@@ -220,17 +225,17 @@ export default function PlotterCard(props: PlotterCardPropT) {
             right: 40,
             bottom: 30,
             top: 0,
-            containLabel: true
+            containLabel: true,
           },
           xAxis: {
             type: "time",
             splitLine: {
-              show: !running
+              show: !running,
             },
             name: "Time",
             axisLabel: {
-              rotate: 10
-            }
+              rotate: 10,
+            },
           },
           yAxis: {
             type: "value",
@@ -243,11 +248,11 @@ export default function PlotterCard(props: PlotterCardPropT) {
             {
               name: "Data",
               type: "line",
-              // step: "start",
+              step: stepType ? "start" : undefined,
               showSymbol: false,
               data: plottingData,
               connectNulls: false,
-              color: props.color
+              color: props.color,
             },
           ],
         }}

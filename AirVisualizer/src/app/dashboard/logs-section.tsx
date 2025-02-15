@@ -9,6 +9,7 @@ export default function LogsSection() {
   const [data, setData] = useState<LogMessageT[]>([]);
 
   const running = useAppState((state) => state.running);
+  const isRunning = useRef(false)
   const logContainer = useRef<HTMLDivElement | null>(null);
   const indexDb = useRef<IDBPDatabase | null>(null);
 
@@ -16,6 +17,9 @@ export default function LogsSection() {
 
   const handleDataReading = useCallback(async () => {
     try {
+      if(!isRunning.current) return;
+      if (logContainer.current)
+        logContainer.current.scrollTop = logContainer.current.scrollHeight;
       if (!indexDb.current) indexDb.current = await initializeDatabase();
       if (indexDb.current.objectStoreNames.contains("logs"))
         setData(await indexDb.current.getAll("logs"));
@@ -23,13 +27,8 @@ export default function LogsSection() {
       console.error(
         `An error occured during assigning plotter: ${error.message}`
       );
-    } finally {
-      if(running){
-        if (logContainer.current)
-          logContainer.current.scrollTop = logContainer.current.scrollHeight;
-      }
     }
-  }, [openDB, setData, logContainer, indexDb, running]);
+  }, [openDB, setData, logContainer, indexDb, running, isRunning]);
 
   const handleClearLogDataBase = useCallback(async () => {
     try {
@@ -50,6 +49,10 @@ export default function LogsSection() {
       clearInterval(timeout);
     };
   }, []);
+
+  useEffect(()=>{
+    isRunning.current = running
+  }, [running])
 
   return (
     <React.Fragment>

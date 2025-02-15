@@ -1,33 +1,69 @@
 @import "tailwindcss";
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  @apply bg-white;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+	@apply bg-white;
+	
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .primary-input {
-  @apply bg-neutral-100 rounded-lg px-3 py-2 text-sm focus:ring-2 ring-0 ring-neutral-400 min-w-sm focus-within:outline-none
+	@apply bg-neutral-100 rounded-lg px-3 py-2 text-sm focus:ring-2 ring-0 ring-neutral-400 min-w-sm focus-within:outline-none
 }
 
 *::-webkit-scrollbar {
-  @apply w-1.5
+	@apply w-1.5
 }
 
 *::-webkit-scrollbar-thumb {
-  @apply rounded-xl bg-neutral-400 mx-1
+	@apply rounded-xl bg-neutral-400 mx-1
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  @apply bg-neutral-700
+	@apply bg-neutral-700
 }
 
 *::-webkit-scrollbar-track {
-  @apply bg-neutral-50 rounded-xl px-1
+	@apply bg-neutral-50 rounded-xl px-1
+}
+
+@import "@radix-ui/colors/black-alpha.css";
+
+.SwitchRoot {
+	width: 21px;
+	height: 13px;
+	margin-right: 4px;
+	background-color: var(--black-a9);
+	border-radius: 9999px;
+	position: relative;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	&[data-state="checked"] {
+		background-color: black;
+	}
+}
+
+.SwitchThumb {
+	display: block;
+	width: 10.5px;
+	height: 10.5px;
+	background-color: white;
+	border-radius: 9999px;
+	transition: transform 100ms;
+	transform: translateX(1px);
+	will-change: transform;
+	&[data-state="checked"] {
+		transform: translateX(9.5px);
+	}
+}
+
+.Label {
+	color: white;
+	font-size: 15px;
+	line-height: 1;
+	user-select: none;
 }
