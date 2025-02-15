@@ -5,7 +5,7 @@ import { useDialogHook } from "../../../hooks/dialog-hooks";
 import useAppState from "../../../lib/store";
 import { openDB } from "idb";
 import { toast } from "sonner";
-import { DB_NAME, DB_VERSION } from "../../../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../../../lib/db";
 
 export default function AttachDevice() {
   const dialog = useDialogHook();
@@ -26,7 +26,7 @@ export default function AttachDevice() {
           throw new Error(
             "Error: Please connect any IoT device to get started."
           );
-        const db = await openDB(DB_NAME, DB_VERSION);
+        const db = await initializeDatabase();
         await db.add("devices", {
           deviceId,
           deviceName,

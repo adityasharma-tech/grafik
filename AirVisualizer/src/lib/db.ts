@@ -1,28 +1,40 @@
-export const DB_NAME = "GrafikDb";
-export const DB_VERSION = 2
+import { openDB } from "idb";
 
-const createIndexesInStores = () => {
-  return new Promise<IDBDatabase>((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-        db.createObjectStore("loggers", { keyPath: "loggerId" });
-        db.createObjectStore("plotters", { keyPath: "plotterId" });
-      
-        const store = db.createObjectStore("plots", {
-          keyPath: "plotId",
-          autoIncrement: true,
-        });
+export const DB_NAME = "GrafikStore";
+export const DB_VERSION = 1
+
+async function initializeDatabase(){
+  const db = await openDB(DB_NAME, DB_VERSION, {
+    upgrade (db) {
+      console.warn(`IndexDB: db upgrage needed; Updating database...`)
+      if(!db.objectStoreNames.contains("loggers")){
+        console.log("Object store 'loggers' not found. Creating new...");
+        db.createObjectStore("loggers", { keyPath: "loggerId" })
+      }
+      if(!db.objectStoreNames.contains("plotters")){
+        console.log("Object store 'plotters' not found. Creating new...");
+        db.createObjectStore("plotters", { keyPath: "plotterId" })
+      }
+  
+      if(!db.objectStoreNames.contains("plots")){
+        console.log("Object store 'plots' not found. Creating new...");
+        const store = db.createObjectStore("plots", { keyPath: "plotId", autoIncrement: true })
         store.createIndex("plotterId", "plotterId");
+      }
+  
       if (!db.objectStoreNames.contains("logs")) {
+        console.log("Object store 'logs' not found. Creating new...");
         const store = db.createObjectStore("logs", { keyPath: "logId", autoIncrement: true });
         store.createIndex("loggerId", "loggerId")
       }
-      db.createObjectStore("devices", { keyPath: "deviceId" });
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
+  
+      if(!db.objectStoreNames.contains("devices")){
+        console.log("Object store 'devices' not found. Creating new...");
+        db.createObjectStore("devices", { keyPath: "deviceId" })
+      }
+    }
+  })
+  return db;
+}
 
-export { createIndexesInStores };
+export { initializeDatabase };

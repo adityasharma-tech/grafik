@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import PlotterCard from "./plotter-card";
 import { moveElementDown, moveElementUp } from "../../lib/utils";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION } from "../../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
 
 export default function PlotterGroup() {
   const [plotters, setPlotters] = useState<any[]>([]);
@@ -23,11 +23,11 @@ export default function PlotterGroup() {
     [setPlotters, moveElementDown, plotters]
   );
 
-  const indexDb = useRef<IDBPDatabase<undefined> | null>(null);
+  const indexDb = useRef<IDBPDatabase | null>(null);
 
   const getAllPlotters = useCallback(async () => {
     try {
-      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (!indexDb.current) indexDb.current = await initializeDatabase();
 
       if (indexDb.current.objectStoreNames.contains("plotters")) {
         const result = await indexDb.current.getAll("plotters");

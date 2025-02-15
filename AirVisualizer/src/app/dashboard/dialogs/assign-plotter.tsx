@@ -3,7 +3,7 @@ import SelectInput from "../../../components/ui/select-input";
 import TextInput from "../../../components/ui/text-input";
 import { useDialogHook } from "../../../hooks/dialog-hooks";
 import { openDB } from "idb";
-import { DB_NAME, DB_VERSION } from "../../../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../../../lib/db";
 import { getRandomColor } from "../../../lib/utils";
 import useAppState from "../../../lib/store";
 
@@ -20,7 +20,7 @@ export default function AssignPlotter() {
     async (e) => {
       e.preventDefault();
       try {
-        const db = await openDB(DB_NAME, DB_VERSION);
+        const db = await initializeDatabase();
         await db.add("plotters", {
           plotterId,
           plotterName,

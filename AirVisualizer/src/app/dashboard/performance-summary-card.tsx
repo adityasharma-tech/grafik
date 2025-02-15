@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import useAppState from "../../lib/store";
 import { openDB } from "idb";
-import { DB_NAME, DB_VERSION } from "../../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
 import { getRandomColor } from "../../lib/utils";
 import { rgba } from 'polished'
 
@@ -19,7 +19,7 @@ export default function PerformanceSummaryCard() {
 
   const getPerformanceDetails = useCallback(async () => {
     try {
-      const db = await openDB(DB_NAME, DB_VERSION);
+      const db = await initializeDatabase();
 
       const localData: {
         plotters?: number;

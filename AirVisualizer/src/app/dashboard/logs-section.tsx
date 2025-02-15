@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { formatTime } from "../../lib/utils";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION } from "../../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
 import { LogMessageT } from "../../lib/types";
 import useAppState from "../../lib/store";
 
@@ -16,7 +16,7 @@ export default function LogsSection() {
 
   const handleDataReading = useCallback(async () => {
     try {
-      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (!indexDb.current) indexDb.current = await initializeDatabase();
       if (indexDb.current.objectStoreNames.contains("logs"))
         setData(await indexDb.current.getAll("logs"));
     } catch (error: any) {
@@ -35,7 +35,7 @@ export default function LogsSection() {
     try {
       if (running)
         throw new Error("Could not clear logs while running database.");
-      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (!indexDb.current) indexDb.current = await initializeDatabase();
       await indexDb.current.clear("logs");
     } catch (error: any) {
       console.error(

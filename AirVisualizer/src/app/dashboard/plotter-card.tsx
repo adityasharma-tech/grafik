@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import useAppState from "../../lib/store";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION } from "../../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../../lib/db";
 import ReactEcharts from "./graph";
 
 interface PlotterCardPropT {
@@ -17,7 +17,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
   const running = useAppState((state) => state.running);
   const isRunning = useRef(false);
 
-  const indexDb = useRef<IDBPDatabase<undefined> | null>(null);
+  const indexDb = useRef<IDBPDatabase | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [plottingData, setPlottingData] = useState<any[]>([]);
@@ -27,7 +27,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
   const handleDataReading = useCallback(async () => {
     try {
       if (!isRunning.current) return;
-      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (!indexDb.current) indexDb.current = await initializeDatabase();
 
       if (indexDb.current.objectStoreNames.contains("plots")) {
         const data = await indexDb.current.getAllFromIndex(
@@ -50,7 +50,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
 
   const handleClearPlottingData = useCallback(async () => {
     try {
-      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (!indexDb.current) indexDb.current = await initializeDatabase()
       if (indexDb.current.objectStoreNames.contains("plots")) {
         await indexDb.current.clear("plots");
         setPlottingData([]);
@@ -62,7 +62,7 @@ export default function PlotterCard(props: PlotterCardPropT) {
 
   const handleDeletePlotter = useCallback(async () => {
     try {
-      if (!indexDb.current) indexDb.current = await openDB(DB_NAME, DB_VERSION);
+      if (!indexDb.current) indexDb.current = await initializeDatabase();
       if (indexDb.current.objectStoreNames.contains("plotters")) {
         await indexDb.current.delete("plotters", props.plotterId);
       }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDialogHook } from "../hooks/dialog-hooks";
 import useAppState from "../lib/store";
 import { IDBPDatabase, openDB } from "idb";
-import { DB_NAME, DB_VERSION } from "../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../lib/db";
 
 import {
   DropdownMenu,
@@ -23,7 +23,7 @@ export default function Header() {
   const loggersRef = useRef<Map<string, { loggerId: string; loggerName: string; deviceId: string; color: string }>>(new Map());
 
   const loadLoggers = useCallback(async () => {
-    if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+    if (!db.current) db.current = await initializeDatabase();
     const storedLoggers = await db.current.getAll("loggers");
   
     // Store loggers in a Map for fast lookup
@@ -36,7 +36,7 @@ export default function Header() {
 
   const addLogger = useCallback(async (lid: string, did: string) => {
     try {
-      if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+      if (!db.current) db.current = await initializeDatabase();
       if (!loggersRef.current.has(lid.trim())) {
         const newLogger = {
           loggerId: lid,
@@ -56,7 +56,7 @@ export default function Header() {
   const addLogData = useCallback(
     async (deviceId: number, loggerId: number, message: string) => {
       try {
-        if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+        if (!db.current) db.current = await initializeDatabase();
         await addLogger(loggerId.toString(), deviceId.toString())
         await db.current.add("logs", {
           deviceId: deviceId.toString(),
@@ -74,7 +74,7 @@ export default function Header() {
   const addPlotData = useCallback(
     async (_: number, plotterId: number, dataPoint: number) => {
       try {
-        if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+        if (!db.current) db.current = await initializeDatabase();
         await db.current.add("plots", {
           plotterId: plotterId.toString(),
           dataPoint,
@@ -152,7 +152,7 @@ export default function Header() {
 
   const handleExportData = useCallback(async () => {
     try {
-      if (!db.current) db.current = await openDB(DB_NAME, DB_VERSION);
+      if (!db.current) db.current = await initializeDatabase();
       const plotterData = await db.current.getAll("plots");
       const loggerData = await db.current.getAll("logs");
       function exportData(data: any, filename: string) {

@@ -4,7 +4,7 @@ import TextInput from "../../../components/ui/text-input";
 import { useDialogHook } from "../../../hooks/dialog-hooks";
 import { DeviceT } from "../../../lib/types";
 import { openDB } from "idb";
-import { DB_NAME, DB_VERSION } from "../../../lib/db";
+import { DB_NAME, DB_VERSION, initializeDatabase } from "../../../lib/db";
 import { getRandomColor } from "../../../lib/utils";
 
 export default function AssignLogger() {
@@ -20,7 +20,7 @@ export default function AssignLogger() {
     async (e) => {
       e.preventDefault();
       try {
-        const db = await openDB(DB_NAME, DB_VERSION);
+        const db = await initializeDatabase();
         await db.add("loggers", {
           loggerId,
           loggerName,
@@ -50,7 +50,7 @@ export default function AssignLogger() {
   useEffect(() => {
     (async () => {
       try {
-        const db = await openDB(DB_NAME, DB_VERSION);
+        const db = await initializeDatabase();
         const result = await db.getAll("devices");
         setDevices(result);
         setDeviceId(deviceId.length >= 0 ? result[0].deviceId : "");
