@@ -18,6 +18,7 @@ export default function Header() {
   const state = useAppState();
 
   const isRunning = useRef(false);
+  const restarting = useRef(true);
   const db = useRef<IDBPDatabase<unknown> | null>(null);
 
   const loggersRef = useRef<Map<string, { loggerId: string; loggerName: string; deviceId: string; color: string }>>(new Map());
@@ -75,6 +76,14 @@ export default function Header() {
     async (_: number, plotterId: number, dataPoint: number) => {
       try {
         if (!db.current) db.current = await initializeDatabase();
+        if(restarting.current){
+          await db.current.add("plots", {
+            plotterId: plotterId.toString(),
+            dataPoint: undefined,
+            timestamp: new Date()
+          })
+          restarting.current = false
+        }
         await db.current.add("plots", {
           plotterId: plotterId.toString(),
           dataPoint,
@@ -86,7 +95,7 @@ export default function Header() {
         );
       }
     },
-    [db, openDB]
+    [db, openDB, restarting]
   );
 
   const runPort = useCallback(
@@ -248,7 +257,12 @@ export default function Header() {
           </button>
         </div>
         <button
-          onClick={state.toogleRunning}
+          onClick={()=>{
+            if(isRunning.current){
+              restarting.current = true
+            }
+            state.toogleRunning()
+          }}
           data-running={state.running ? "true" : "false"}
           className="hover:bg-gray-800 min-w-44 data-[running='true']:bg-rose-700 data-[running='true']:border-rose-800 duration-75 data-[running='true']:animate-pulse rounded-xl border border-[#141414] text-white font-medium bg-black px-5 pl-6 disabled:opacity-85 py-2 text-sm cursor-pointer disabled:cursor-none"
         >
