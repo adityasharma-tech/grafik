@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 export default function WhatAreYouWaitingForComp() {
   const [visible, setVisible] = useState(false);
   const VideoBox = () => {
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+    const videoRef = useRef<HTMLVideoElement | null>(null)
+    React.useEffect(()=>{
+      if(audioRef.current) audioRef.current.volume = 0.3
+    }, [audioRef])
+    
     if (visible)
       return (
         <React.Fragment>
           <div className="inset-0 fixed bg-black/10 backdrop-blur-xs z-40 flex justify-center items-center">
-            <div className="flex relative justify-center items-center text-neutral-900 w-[70vw] h-[70vh] rounded-xl bg-white">
-            <button className="absolute rounded-full px-1 py-1 border border-neutral-300 hover:ring-2 cursor-pointer hover:bg-neutral-100 transition-all ring-offset-2 ring-neutral-200 rotate-45 right-3 top-3" onClick={() => setVisible(!visible)}>
+            <div className="flex relative p-1 justify-center items-center text-neutral-900 w-[70vw] rounded-xl bg-white">
+            <button className="absolute z-50 bg-white rounded-full px-1 py-1 border border-neutral-300 hover:ring-2 cursor-pointer hover:bg-neutral-100 transition-all ring-offset-2 ring-neutral-200 rotate-45 right-3 top-3" onClick={() => setVisible(!visible)}>
               <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M6 12h12m-6-6v12"
@@ -19,8 +25,12 @@ export default function WhatAreYouWaitingForComp() {
                 />
               </svg>
             </button>
-              {/* <video src="" className="w-[80%] h-auto"/> */}
-              <span className="text-lg">Video will be available soon.</span>
+              <video ref={videoRef} autoPlay loop controls className="w-full h-auto rounded-lg">
+                <source src="tutorial.mp4"/> 
+              </video>
+              <audio ref={audioRef} autoPlay loop hidden>
+                <source src="tutorial.mp3"/>
+              </audio>
             </div>
           </div>
         </React.Fragment>

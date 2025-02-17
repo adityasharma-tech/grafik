@@ -29,7 +29,7 @@ export default function Home() {
         </div>
         <div>
           <a
-            href="https://adityasharma.live/#contact"
+            href="https://i.adityasharma.live/x"
             target="_blank"
             className="py-3 px-5 bg-[#147655] rounded-lg text-white text-xs font-semibold cursor-pointer hover:opacity-90 transition-opacity"
           >
