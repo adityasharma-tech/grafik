@@ -1,18 +1,19 @@
+import { v4 as uuidv4 } from "uuid";
+import { Toaster } from "../components/sonner";
 import { initializeDatabase } from "../lib/db";
+import { useDialogHook } from "../hooks/dialog-hooks";
 import { useCallback, useEffect, useState } from "react";
+
+import useAppState from "../lib/store";
 import Header from "../components/header";
 import LogsSection from "./dashboard/logs-section";
-import PerformanceSummaryCard from "./dashboard/performance-summary-card";
 import PlotterGroup from "./dashboard/plotter-group";
 import SerialWritter from "./dashboard/serial-writter";
-import { v4 as uuidv4 } from "uuid";
-import PermissionDialog from "../components/permission-dialog";
-import useAppState from "../lib/store";
-import AssignPlotter from "./dashboard/dialogs/assign-plotter";
 import AssignLogger from "./dashboard/dialogs/assign-logger";
 import AttachDevice from "./dashboard/dialogs/attach-device";
-import { Toaster } from "../components/sonner";
-import { useDialogHook } from "../hooks/dialog-hooks";
+import AssignPlotter from "./dashboard/dialogs/assign-plotter";
+import PermissionDialog from "../components/permission-dialog";
+import PerformanceSummaryCard from "./dashboard/performance-summary-card";
 
 export default function Dashboard() {
   const [isSerialPermissionDialogOpen, setSerialPermissionDialogOpen] =
@@ -24,7 +25,7 @@ export default function Dashboard() {
   const handleListPorts = useCallback(async () => {
     if (window.navigator && "serial" in navigator) {
       try {
-        // @ts-ignore
+        // @ts-expect-error: Serial is not defalt included in typescript
         const ps = await navigator.serial.getPorts();
         if (!ps) throw new Error("Failed to get serial ports.");
         setPorts(
@@ -41,7 +42,7 @@ export default function Dashboard() {
   const handleSerialPermissions = useCallback(async () => {
     if (window.navigator && "serial" in window.navigator) {
       try {
-        // @ts-ignore
+        // @ts-expect-error: Serial is not defalt included in typescript
         await window.navigator.serial.requestPort({
           filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
         });
@@ -52,16 +53,16 @@ export default function Dashboard() {
         setSerialPermissionDialogOpen(false);
       }
     }
-  }, [window, handleListPorts]);
+  }, [window, handleListPorts, setSerialPermissionDialogOpen]);
 
   useEffect(() => {
     if (!(window.navigator && "serial" in navigator)) return;
     (async () => await handleListPorts())();
   }, [window]);
 
-  useEffect(()=>{
-    (async ()=>await initializeDatabase())();
-  }, [])
+  useEffect(() => {
+    (async () => await initializeDatabase())();
+  }, []);
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-x-hidden overflow-y-auto">
