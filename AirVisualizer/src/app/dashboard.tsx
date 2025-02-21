@@ -64,9 +64,9 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div className="flex flex-col bg-neutral-100 gap-1 h-screen w-screen overflow-x-hidden overflow-y-auto">
+    <div className="flex flex-col h-screen w-screen overflow-x-hidden overflow-y-auto">
       <Header />
-      <main className="md:px-10 px-3">
+      <main className="md:px-10 px-3 bg-neutral-200">
         <PerformanceSummaryCard />
         <div className="flex md:flex-row flex-col gap-3 py-2 gap-x-4">
           <PlotterGroup />
