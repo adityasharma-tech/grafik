@@ -44,7 +44,7 @@ export default function Dashboard() {
       try {
         // @ts-expect-error: Serial is not defalt included in typescript
         await window.navigator.serial.requestPort({
-          filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
+          // filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
         });
       } catch (error: any) {
         console.error(`Error occured: ${error.message}`);
