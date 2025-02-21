@@ -14,6 +14,7 @@ import AttachDevice from "./dashboard/dialogs/attach-device";
 import AssignPlotter from "./dashboard/dialogs/assign-plotter";
 import PermissionDialog from "../components/permission-dialog";
 import PerformanceSummaryCard from "./dashboard/performance-summary-card";
+import { filters } from "../lib/filters";
 
 export default function Dashboard() {
   const [isSerialPermissionDialogOpen, setSerialPermissionDialogOpen] =
@@ -44,7 +45,7 @@ export default function Dashboard() {
       try {
         // @ts-expect-error: Serial is not defalt included in typescript
         await window.navigator.serial.requestPort({
-          // filters: [{ usbVendorId: 0x2341, usbProductId: 0x0043 }],
+          filters
         });
       } catch (error: any) {
         console.error(`Error occured: ${error.message}`);
